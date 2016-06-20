@@ -94,7 +94,6 @@ public class MainActivity extends BaseActivity{
                         .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                             }
                         });
                 builder.show();
