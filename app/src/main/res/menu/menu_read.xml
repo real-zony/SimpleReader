@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".UI.MainActivity">
+    <item
+        android:id="@+id/read_next"
+        android:orderInCategory="100"
+        android:title="上一章"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/read_up"
+        android:orderInCategory="100"
+        android:title="下一章"
+        app:showAsAction="always"/>
+</menu>

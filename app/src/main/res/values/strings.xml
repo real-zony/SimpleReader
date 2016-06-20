@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">简单阅读</string>
+    <string name="action_about">关于</string>
+    <string name="about_dialog_message">作者:Zony\n\n版本:内测版\n\n联系方式:QQ群：337656932</string>
+    <string name="OK">确定</string>
+    <string name="menu_item_settings">设置</string>
+    <string name="cancel">取消</string>
+    <string name="title_activity_setting">settings</string>
+
+    <string name="general_settings">常规设置</string>
+    <string name="right_hand_mode">右手操作模式</string>
+    <string name="right_hand_mode_summary">开启右手操作模式，侧边栏将从右边划开，默认从左边划开</string>
+    <string name="right_hand_mode_key">right_hand_mode_key</string>
+
+    <string name="clear_cache_data_key">clear_cache_data_key</string>
+    <string name="clear_cache_data">清空缓存</string>
+    <string name="clear_cache_success">缓存清除成功</string>
+    <string name="clear_cache_fail">缓存清除失败</string>
+
+    <string name="other">其它设置</string>
+    <string name="advice_feedback">意见反馈</string>
+    <string name="give_favor">给应用点赞</string>
+    <string name="advice_feedback_key">advice_feedback</string>
+    <string name="give_favor_key">give_favor</string>
+    <string name="no_email_app_tip">请先安装邮件应用并设置账户,或直接发送邮件至 1250440341@qq.com</string>
+    <string name="double_back_exit_hint">再按一次返回键退出应用</string>
+
+    <string name="tip_loading">正在加载...</string>
+    <string name="tip_load_error">数据加载失败</string>
+    <string name="tip_load_empty">暂无数据</string>
+    <string name="tip_load_network_error">没有可用网络</string>
+
+    <string name="foot_state_error">加载数据错误，请重新加载</string>
+    <string name="foot_state_empty">没有更多的数据</string>
+    <string name="foot_state_more">正在加载...请稍后</string>
+    <string name="foot_state_full">已加载全部数据</string>
+
+    <string name="request_data_error_hint">请求网络数据错误</string>
+</resources>
