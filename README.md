@@ -1,6 +1,13 @@
 #SimpleReader 简单阅读
 
-使用到的第三方库：  
+##开发环境：
+Android Studio 2.1.2
+###SDK 版本：
+compileSdkVersion 23
+minSdkVersion 15
+targetSdkVersion 23
+
+## 使用到的第三方库：  
 
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.android.support:appcompat-v7:23.2.0'
