@@ -15,7 +15,7 @@
 
 本项目界面设计参照于[http://git.oschina.net/Mr.LiaBin/my-oscgit-android](http://git.oschina.net/Mr.LiaBin/my-oscgit-android)
 
-界面截图：
+界面截图:  
 ![截图1](http://git.oschina.net/uploads/images/2016/0620/224606_259fa2d7_24648.png "截图1")
 ![截图2](http://git.oschina.net/uploads/images/2016/0620/224625_4d7444a8_24648.png "截图2")
 ![截图3](http://git.oschina.net/uploads/images/2016/0620/224640_edafc6ac_24648.png "截图3")
