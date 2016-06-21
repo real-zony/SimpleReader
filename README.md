@@ -13,7 +13,7 @@
     compile 'com.pnikosis:materialish-progress:1.5'
     compile files('libs/volley.jar')
 
-本项目参照于[http://git.oschina.net/Mr.LiaBin/my-oscgit-android](http://git.oschina.net/Mr.LiaBin/my-oscgit-android)
+本项目界面设计参照于[http://git.oschina.net/Mr.LiaBin/my-oscgit-android](http://git.oschina.net/Mr.LiaBin/my-oscgit-android)
 
 界面截图：
 ![截图1](http://git.oschina.net/uploads/images/2016/0620/224606_259fa2d7_24648.png "截图1")
