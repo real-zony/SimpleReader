@@ -3,14 +3,19 @@ package com.myzony.zonynovelreader.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.UI.SettingActivity;
 import com.jenzz.materialpreference.Preference;
 import com.jenzz.materialpreference.SwitchPreference;
+import com.myzony.zonynovelreader.cache.DataCleanManager;
 import com.myzony.zonynovelreader.utils.FileUtils;
 
 import java.io.File;
@@ -54,6 +59,19 @@ public class SettingsFragment extends PreferenceFragment {
         initCachePreference();
     }
 
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, android.preference.Preference preference) {
+        if(preference == null){
+            return super.onPreferenceTreeClick(preferenceScreen,preference);
+        }
+
+        String key = preference.getKey();
+        if(TextUtils.equals(key,getString(R.string.clear_cache_data_key))){
+            clearAppCache();
+        }
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
+
     /**
      * 初始化缓存首选项
      */
@@ -73,5 +91,38 @@ public class SettingsFragment extends PreferenceFragment {
         if (fileSize > 0)
             cacheSize = FileUtils.formatFileSize(fileSize);
         clearCachePreference.setSummary(cacheSize);
+    }
+    private void clearAppCache(){
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                if(msg.what == 1){
+                    clearCachePreference.setSummary("0KB");
+                    Toast.makeText(getActivity(),getString(R.string.clear_cache_success),Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getActivity(),getString(R.string.clear_cache_fail),Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+
+        new Thread(){
+            @Override
+            public void run() {
+                Message msg = new Message();
+                try{
+                    DataCleanManager.cleanDatabases(getActivity());
+                    DataCleanManager.cleanInternalCache(getActivity());
+                    // 2.2版本才有将应用缓存转移到sd卡的功能
+                    if (AppContext.isMethodsCompat(android.os.Build.VERSION_CODES.FROYO)) {
+                        DataCleanManager.cleanCustomCache(getActivity().getExternalCacheDir());
+                    }
+                    msg.what =1;
+                }catch (Exception exp){
+                    exp.printStackTrace();
+                    msg.what = -1;
+                }
+                handler.sendMessage(msg);
+            }
+        }.start();
     }
 }

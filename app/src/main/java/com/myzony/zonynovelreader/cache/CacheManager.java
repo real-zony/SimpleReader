@@ -16,10 +16,6 @@ import java.io.Serializable;
  * Created by mo199 on 2016/5/28.
  */
 public class CacheManager {
-
-    // wifi缓存时间为5分钟
-    private static long wifi_cache_time = 5 * 60 * 1000;
-    // 其他网络环境为1小时
     private static long other_cache_time = 60 * 60 * 1000;
 
     /**
