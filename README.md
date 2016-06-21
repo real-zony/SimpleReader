@@ -2,9 +2,9 @@
 
 ##开发环境：
 Android Studio 2.1.2
-###SDK 版本：
-compileSdkVersion 23
-minSdkVersion 15
+###SDK 版本：  
+compileSdkVersion 23  
+minSdkVersion 15  
 targetSdkVersion 23
 
 ## 使用到的第三方库：  
