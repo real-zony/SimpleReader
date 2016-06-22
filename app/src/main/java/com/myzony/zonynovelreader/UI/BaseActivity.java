@@ -40,6 +40,10 @@ public abstract class BaseActivity extends AppCompatActivity{
         initToolbar();
     }
 
+    /**
+     * 获得当前视图文件
+     * @return 资源编号
+     */
     protected abstract int getLayoutView();
 
     protected void initToolbar() {

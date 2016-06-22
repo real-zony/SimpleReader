@@ -1,11 +1,14 @@
 package com.myzony.zonynovelreader.NovelCore;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.myzony.zonynovelreader.bean.ChapterInfo;
 import com.myzony.zonynovelreader.bean.NovelInfo;
 import com.myzony.zonynovelreader.utils.RegexUtils;
 
@@ -16,21 +19,16 @@ import java.util.regex.Matcher;
  * Created by mo199 on 2016/5/25.
  */
 public class Plug_00ksw extends NovelCore {
-
-    /**
-     * 绑定响应对象的回调接口
-     * @param callback 目标回调对象
-     */
     @Override
-    public void bindCallBack(Plug_Callback callback) {
-        super.bindCallBack(callback);
+    public void bindCB_Novel(Plug_Callback_Novel callback_novel) {
+        super.bindCB_Novel(callback_novel);
     }
 
-    /**
-     * 获得小说Url列表
-     * @param targetHTML 列表页面Html数据
-     * @param queue 网络请求队列
-     */
+    @Override
+    public void bindCB_Chapter(Plug_CallBack_Chapter callBack_chapter) {
+        super.bindCB_Chapter(callBack_chapter);
+    }
+
     @Override
     public void getNovelUrl(String targetHTML, RequestQueue queue) {
         this.mQueue = queue;
@@ -61,8 +59,31 @@ public class Plug_00ksw extends NovelCore {
         } catch (UnsupportedEncodingException exp) {
             return;
         }
+    }
 
-        return;
+    @Override
+    public void getChapterList(final String novelUrl, final Context context) {
+        StringRequest stringRequest = new StringRequest(novelUrl.replaceAll("html", "ml").replaceAll("www", "m"), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                try {
+                    String resquest = new String(s.getBytes("ISO-8859-1"), "gbk");
+                    // 提取最大页码
+                    Matcher matcher = RegexUtils.newMatcher("第\\d+/\\d+页", resquest, true);
+                    Matcher matcherYeMa = RegexUtils.newMatcher("\\d+(?=页)", matcher.group().toString(), true);
+                    // 加载章节
+                    chapterLoad(Integer.parseInt(matcherYeMa.group().toString()), novelUrl.replaceAll("html", "ml").replaceAll("www", "m"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Toast.makeText(context,"出现错误",Toast.LENGTH_LONG).show();
+            }
+        });
+        mQueue.add(stringRequest);
     }
 
     /**
@@ -98,7 +119,7 @@ public class Plug_00ksw extends NovelCore {
                         info.setUrl(matcher_imageUrl.group().toString().replaceAll("\\d+s.jpg", "").replaceAll("img", "html"));
                         Log.i("infinifnifnifnifnifn", info.getUrl());
                         infoList.add(info);
-                        check();
+                        novelLoadCheck();
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -113,7 +134,49 @@ public class Plug_00ksw extends NovelCore {
                     info.setName("error");
                     info.setUpdate("error");
                     infoList.add(info);
-                    check();
+                    novelLoadCheck();
+                }
+            });
+            mQueue.add(stringRequest);
+        }
+    }
+
+    /**
+     * 加载小说章节列表
+     * @param page 最大页码
+     * @param url 目录页面地址
+     */
+    private void chapterLoad(final int page,String url){
+        for(int i=1;i<page+1;i++){
+            final int count=i;
+            StringRequest stringRequest = new StringRequest(String.format("%s_%d%s",url.substring(0,url.length()-1),i,"/"), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String s) {
+                    try {
+                        String request = new String(s.getBytes("ISO-8859-1"), "gbk");
+                        // 提取小说章节URL
+                        Matcher matcher_chapter = RegexUtils.newMatcher("/html/\\d+/\\d+/\\d+.html",request,false);
+                        Matcher matcher_title = RegexUtils.newMatcher("html'>.+<span>",request,false);
+                        while(matcher_chapter.find()){
+                            ChapterInfo title = new ChapterInfo();
+                            title.setUrl(String.format("http://m.00ksw.com/%s",matcher_chapter.group().toString()));
+                            // 提取章节id
+                            Matcher matcher_id = RegexUtils.newMatcher("\\d+(?=.html)",title.getUrl(),true);
+                            title.setId(Integer.parseInt(matcher_id.group().toString()));
+                            // 提取标题
+                            matcher_title.find();
+                            title.setTitle(matcher_title.group().toString().replaceAll("html'>","").replaceAll("<span>",""));
+                            chapterInfoList.add(title);
+                        }
+                        chapterLoadCheck(count + 1,page);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Toast.makeText(context,"出现错误",Toast.LENGTH_LONG).show();
                 }
             });
             mQueue.add(stringRequest);
@@ -123,9 +186,20 @@ public class Plug_00ksw extends NovelCore {
     /**
      * 检测是否全部加载，加载完成之后通知目标对象。
      */
-    private void check() {
+    private void novelLoadCheck() {
         if (infoList.size() == infoListUrl.size()) {
-            callback.call(infoList);
+            callback_novel.call_Novel(infoList);
+        }
+    }
+
+    /**
+     * 检测章节列表是否加载完成
+     * @param currentPage 当前加载到的Page数目
+     * @param targetPage 目标需要加载的Page数目
+     */
+    private void chapterLoadCheck(int currentPage,int targetPage){
+        if(currentPage == targetPage){
+            callBack_chapter.call_Chapter(chapterInfoList);
         }
     }
 }

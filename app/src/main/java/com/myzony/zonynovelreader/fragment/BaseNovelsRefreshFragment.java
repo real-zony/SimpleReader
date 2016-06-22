@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by mo199 on 2016/5/28.
  */
-public abstract class BaseProjectsRefreshFragment extends BaseSwipeRefreshFragment<NovelInfo> {
+public abstract class BaseNovelsRefreshFragment extends BaseSwipeRefreshFragment<NovelInfo> {
     protected static final String PROJECT_TYPE = "project_type";
 
     @Override

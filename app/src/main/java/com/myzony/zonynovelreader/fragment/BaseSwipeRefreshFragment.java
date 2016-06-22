@@ -20,7 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.Common.DividerItemDecoration;
-import com.myzony.zonynovelreader.NovelCore.Plug_Callback;
+import com.myzony.zonynovelreader.NovelCore.Plug_Callback_Novel;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.UI.BaseActivity;
 import com.myzony.zonynovelreader.adapter.BaseStateRecyclerAdapter;
@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by mo199 on 2016/5/28.
  */
-public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements SwipeRefreshLayout.OnRefreshListener,Plug_Callback{
+public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements SwipeRefreshLayout.OnRefreshListener,Plug_Callback_Novel {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
@@ -192,7 +192,7 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
      * @param list 返回读取成功的list
      */
     @Override
-    public void call(List<NovelInfo> list) {
+    public void call_Novel(List<NovelInfo> list) {
         loadDataComplete((List<T>) list);
     }
 
@@ -207,7 +207,7 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        AppContext.getPlug().bindCallBack(baseSwipeRefreshFragment);
+                        AppContext.getPlug().bindCB_Novel(baseSwipeRefreshFragment);
                         AppContext.getPlug().getNovelUrl(response,mQueue);
                     }
                 },

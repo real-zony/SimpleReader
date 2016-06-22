@@ -5,12 +5,12 @@ import android.os.Bundle;
 /**
  * Created by mo199 on 2016/5/28.
  */
-public class AllProjectFragment extends BaseProjectsRefreshFragment {
+public class AllNovelFragment extends BaseNovelsRefreshFragment {
     private String ALL_PROJECT_CACHE_PREFIX = "project_all_";
     private String projectType;
 
-    public static AllProjectFragment newInstance(String projectType) {
-        AllProjectFragment fragment = new AllProjectFragment();
+    public static AllNovelFragment newInstance(String projectType) {
+        AllNovelFragment fragment = new AllNovelFragment();
         Bundle args = new Bundle();
         args.putString(PROJECT_TYPE, projectType);
         fragment.setArguments(args);

@@ -8,7 +8,7 @@ import java.net.URLEncoder;
 /**
  * Created by mo199 on 2016/6/6.
  */
-public class SearchFragment extends BaseProjectsRefreshFragment {
+public class SearchFragment extends BaseNovelsRefreshFragment {
     private String SEARCH_PROJECT_CACHE_PREFIX = "project_search_";
     private String searchKey;
 
