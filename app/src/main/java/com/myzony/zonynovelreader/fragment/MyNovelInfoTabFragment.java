@@ -1,7 +1,7 @@
 package com.myzony.zonynovelreader.fragment;
 
 import com.myzony.zonynovelreader.Common.NovelTab;
-
+import android.support.v4.app.Fragment;
 import java.util.List;
 
 /**
@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class MyNovelInfoTabFragment extends BaseTabViewpageFragment {
     @Override
-    protected void initViewpagerFragmentList(List<android.support.v4.app.Fragment> viewpagerFragmentList, List<String> mTitles) {
+    protected void initViewpagerFragmentList(List<Fragment> viewpagerFragmentList, List<String> mTitles) {
         mTitles.add("推荐小说");
         viewpagerFragmentList.add(AllNovelFragment.newInstance(NovelTab.FeaturedNovel));
 

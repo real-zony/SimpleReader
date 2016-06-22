@@ -48,6 +48,7 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
     private ArrayList<String> chapter_list_url;
     private int currentChapterPos;
     private RequestQueue mQueue;
+    private String currentChapterTitle;
 
     @Override
     protected int getLayoutView() {
@@ -62,6 +63,7 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
             chapter_url = bundle.getString("url");
             currentChapterPos = bundle.getInt("pos");
             chapter_list_url = (ArrayList<String>) bundle.getSerializable("url_List");
+            currentChapterTitle = bundle.getString("chapterName");
         }
 
         toolbar.setSubtitleTextColor(getResources().getColor(android.R.color.white));
@@ -85,6 +87,8 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
     }
 
     private void loadData() {
+        toolbar.setSubtitle(currentChapterTitle);
+
         AppContext.getPlug().bindCB_Read(this);
         AppContext.getPlug().getNovelData(chapter_url,mQueue);
     }

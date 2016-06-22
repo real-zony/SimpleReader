@@ -198,7 +198,7 @@ public class Plug_00ksw extends NovelCore {
                             title.setTitle(matcher_title.group().toString().replaceAll("html'>", "").replaceAll("<span>", ""));
                             chapterInfoList.add(title);
                         }
-                        chapterLoadCheck(count + 1, page);
+                        chapterLoadCheck(count, page);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }

@@ -83,6 +83,7 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
                 bundle.putInt("pos",position);
                 bundle.putString("url",chapter_list_url.get(position));
                 bundle.putSerializable("url_List",chapter_list_url);
+                bundle.putString("chapterName",chapter_list_title.getItem(position));
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
