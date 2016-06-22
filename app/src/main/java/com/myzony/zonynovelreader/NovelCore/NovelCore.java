@@ -71,7 +71,8 @@ public abstract class NovelCore {
      * 章节列表获取
      * @param novelUrl 小说URL
      * @param context 调用的Activity上下文对象
+     * @param queue 请求队列
      * @return 是否获取成功
      */
-    public abstract void getChapterList(final String novelUrl,final Context context);
+    public abstract void getChapterList(final String novelUrl,final Context context,RequestQueue queue);
 }

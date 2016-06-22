@@ -90,7 +90,7 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
 
         // 加载章节
         AppContext.getPlug().bindCB_Chapter(this);
-        AppContext.getPlug().getChapterList(currentNovelInfo.getUrl(),this);
+        AppContext.getPlug().getChapterList(currentNovelInfo.getUrl(),this,Volley.newRequestQueue(this));
     }
 
     @Override

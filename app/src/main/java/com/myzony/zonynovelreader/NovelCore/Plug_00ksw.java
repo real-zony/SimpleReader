@@ -62,7 +62,8 @@ public class Plug_00ksw extends NovelCore {
     }
 
     @Override
-    public void getChapterList(final String novelUrl, final Context context) {
+    public void getChapterList(final String novelUrl, final Context context,RequestQueue queue) {
+        mQueue = queue;
         StringRequest stringRequest = new StringRequest(novelUrl.replaceAll("html", "ml").replaceAll("www", "m"), new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
