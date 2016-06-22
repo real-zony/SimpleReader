@@ -5,6 +5,7 @@ import com.myzony.zonynovelreader.bean.ChapterInfo;
 import java.util.ArrayList;
 
 /**
+ * 回调接口，用于传递加载成功的章节列表
  * Created by mo199 on 2016/6/22.
  */
 public interface Plug_CallBack_Chapter {

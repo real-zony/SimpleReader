@@ -38,6 +38,10 @@ public abstract class NovelCore {
      */
     protected Plug_CallBack_Chapter callBack_chapter;
     /**
+     * 回调接口-小说数据
+     */
+    protected Plug_CallBack_Read callBack_read;
+    /**
      * 用于Toast显示的上下文
      */
     protected Context context;
@@ -61,6 +65,14 @@ public abstract class NovelCore {
     }
 
     /**
+     * 绑定响应对象回调接口
+     * @param callBack_read
+     */
+    public void bindCB_Read(Plug_CallBack_Read callBack_read){
+        this.callBack_read = callBack_read;
+    }
+
+    /**
      * 获得小说Url列表
      * @param targetHTML 列表页面Html数据
      * @param queue 网络请求队列
@@ -75,4 +87,12 @@ public abstract class NovelCore {
      * @return 是否获取成功
      */
     public abstract void getChapterList(final String novelUrl,final Context context,RequestQueue queue);
+
+    /**
+     * 获得小说内容
+     * @param url 阅读页面url
+     * @param queue 网络请求队列
+     * @return 加载好的数据
+     */
+    public abstract void getNovelData(String url,RequestQueue queue);
 }

@@ -20,6 +20,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.myzony.zonynovelreader.Common.AppContext;
+import com.myzony.zonynovelreader.NovelCore.Plug_CallBack_Read;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.utils.RegexUtils;
 import com.myzony.zonynovelreader.widget.TipInfoLayout;
@@ -33,7 +35,7 @@ import butterknife.InjectView;
 /**
  * Created by mo199 on 2016/6/5.
  */
-public class ReadActivity extends BaseActivity{
+public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
 
     @InjectView(R.id.webView)
     WebView webView;
@@ -83,27 +85,8 @@ public class ReadActivity extends BaseActivity{
     }
 
     private void loadData() {
-        StringRequest stringRequest = new StringRequest(chapter_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                try {
-                    String resquest = new String(s.getBytes("ISO-8859-1"), "gbk");
-                    Matcher matcher = RegexUtils.newMatcher("<div id=\"nr1\">.+</div>",resquest,true);
-                    setWebView(true);
-                    webView.loadDataWithBaseURL(null, matcher.group().toString(), "text/html", "utf-8", null);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                setWebView(false);
-                tipInfoLayout.setLoadError("加载失败，请点击重试");
-            }
-        });
-
-        mQueue.add(stringRequest);
+        AppContext.getPlug().bindCB_Read(this);
+        AppContext.getPlug().getNovelData(chapter_url,mQueue);
     }
 
     private void setWebView(boolean visiable){
@@ -122,50 +105,24 @@ public class ReadActivity extends BaseActivity{
             case android.R.id.home:
                 finish();
                 return true;
+            // 下一章
             case R.id.read_next:
                 if(currentChapterPos != chapter_list_url.size()){
                     currentChapterPos++;
                 }
-                getNovel(chapter_list_url.get(currentChapterPos));
+                AppContext.getPlug().getNovelData(chapter_list_url.get(currentChapterPos),mQueue);
                 break;
+            // 上一章
             case R.id.read_up:
-                if(currentChapterPos == 0){
-                    getNovel(chapter_list_url.get(currentChapterPos));
-                }else{
+                if(currentChapterPos != 0) {
                     currentChapterPos--;
-                    getNovel(chapter_list_url.get(currentChapterPos));
                 }
+                AppContext.getPlug().getNovelData(chapter_list_url.get(currentChapterPos),mQueue);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void getNovel(String url){
-        // 加载
-        setWebView(false);
-        tipInfoLayout.setLoading();
-
-        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                try {
-                    String resquest = new String(s.getBytes("ISO-8859-1"), "gbk");
-                    Matcher matcher = RegexUtils.newMatcher("<div id=\"nr1\">.+</div>", resquest,true);
-                    setWebView(true);
-                    webView.loadDataWithBaseURL(null, matcher.group().toString(), "text/html", "utf-8", null);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                setWebView(false);
-                tipInfoLayout.setLoadError("加载失败，请点击重试");
-            }
-        });
-        mQueue.add(stringRequest);
-    }
 
     @Override
     protected void initToolbar() {
@@ -177,5 +134,16 @@ public class ReadActivity extends BaseActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_read,menu);
         return true;
+    }
+
+    @Override
+    public void call_Read(String data) {
+        if(data != null){
+            setWebView(true);
+            webView.loadDataWithBaseURL(null, data, "text/html", "utf-8", null);
+        }else{
+            setWebView(false);
+            tipInfoLayout.setLoadError("加载失败，请点击重试");
+        }
     }
 }
