@@ -8,11 +8,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.bean.ChapterInfo;
 import com.myzony.zonynovelreader.bean.NovelInfo;
 import com.myzony.zonynovelreader.utils.RegexUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Objects;
 import java.util.regex.Matcher;
 
@@ -21,32 +23,18 @@ import java.util.regex.Matcher;
  */
 public class Plug_00ksw extends NovelCore {
     @Override
-    public void bindCB_Novel(Plug_Callback_Novel callback_novel) {
-        super.bindCB_Novel(callback_novel);
-    }
-
-    @Override
-    public void bindCB_Chapter(Plug_CallBack_Chapter callBack_chapter) {
-        super.bindCB_Chapter(callBack_chapter);
-    }
-
-    @Override
-    public void bindCB_Read(Plug_CallBack_Read callBack_read) {
-        super.bindCB_Read(callBack_read);
-    }
-
-    @Override
     public void getNovelUrl(String targetHTML, RequestQueue queue) {
+        AppContext.PAGE_SIZE = 10;
         this.mQueue = queue;
         // 清空容器
         infoList.clear();
         infoListUrl.clear();
 
         try {
-            String resquest = new String(targetHTML.getBytes("ISO-8859-1"), "gbk");
+            String request = new String(targetHTML.getBytes("ISO-8859-1"), "gbk");
             if (targetHTML.indexOf("weekvisit") != -1) { // 推荐榜
                 // 抓取作品URL地址
-                Matcher matcher = RegexUtils.newMatcher("/html/\\d+/\\d+/", resquest, false);
+                Matcher matcher = RegexUtils.newMatcher("/html/\\d+/\\d+/", request, false);
                 while (matcher.find()) {
                     // 重构URL
                     String res = String.format("http://m.00ksw.com%s", matcher.group().toString());
@@ -54,7 +42,7 @@ public class Plug_00ksw extends NovelCore {
                     infoListUrl.add(res);
                 }
             } else { // 搜索
-                Matcher matcher = RegexUtils.newMatcher("http://.+.00ksw.com/html/\\d+/\\d+/", resquest, false);
+                Matcher matcher = RegexUtils.newMatcher("http://.+.00ksw.com/html/\\d+/\\d+/", request, false);
                 while (matcher.find()) {
                     if (!infoListUrl.contains(matcher.group().toString().replaceAll("www", "m"))) {
                         infoListUrl.add(matcher.group().toString().replaceAll("www", "m"));
@@ -118,7 +106,23 @@ public class Plug_00ksw extends NovelCore {
 
     @Override
     public String getSearchUrl(String searchKey,int page) {
+        // URL编码
+        try {
+            searchKey = URLEncoder.encode(searchKey,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return String.format("http://zhannei.baidu.com/cse/search?q=%s&p=%d&s=13150090723783341603",searchKey,page-1);
+    }
+
+    @Override
+    public String getItemURL(int page) {
+        if(page==1)
+        {
+            return String.format("http://m.00ksw.com/s_top_weekvisit/");
+        }else{
+            return String.format("http://m.00ksw.com/s_top_weekvisit/%d/",page);
+        }
     }
 
     /**
@@ -163,7 +167,7 @@ public class Plug_00ksw extends NovelCore {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     NovelInfo info = new NovelInfo();
-                    info.setImageUrl("http://www.00ksw.com/img/15/15223/15223s.jpg");
+                    info.setImageUrl("http://www.bxwx8.org/image/99/99491/99491s.jpg");
                     info.setAuthor("error");
                     info.setDescript("error");
                     info.setName("error");

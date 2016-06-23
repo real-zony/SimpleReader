@@ -4,9 +4,6 @@ import android.os.Bundle;
 
 import com.myzony.zonynovelreader.Common.AppContext;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 /**
  * Created by mo199 on 2016/6/6.
  */
@@ -37,12 +34,6 @@ public class SearchFragment extends BaseNovelsRefreshFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             searchKey = getArguments().getString(PROJECT_TYPE);
-            // URL编码
-            try {
-                searchKey = URLEncoder.encode(searchKey,"utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

@@ -97,5 +97,18 @@ public abstract class NovelCore {
      */
     public abstract void getNovelData(String url,RequestQueue queue);
 
+    /**
+     * 获得搜索URL
+     * @param searchKey 搜索书籍的名字
+     * @param page 页码
+     * @return URL
+     */
     public abstract String getSearchUrl(String searchKey,int page);
+
+    /**
+     * 推荐条目URL
+     * @param page 页码
+     * @return URL
+     */
+    public abstract String getItemURL(int page);
 }

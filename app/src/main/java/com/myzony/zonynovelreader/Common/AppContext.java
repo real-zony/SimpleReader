@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.myzony.zonynovelreader.NovelCore.NovelCore;
 import com.myzony.zonynovelreader.NovelCore.Plug_00ksw;
+import com.myzony.zonynovelreader.NovelCore.Plug_bxwx;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.bean.NovelInfo;
 
@@ -46,7 +47,7 @@ public class AppContext extends Application {
         setDefaultTheme();
         appContext = this;
         // 初始化小说源对象
-        plug = new Plug_00ksw();
+        plug = new Plug_bxwx();
     }
 
     // 获得APPContext实例

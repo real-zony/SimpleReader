@@ -2,6 +2,8 @@ package com.myzony.zonynovelreader.fragment;
 
 import android.os.Bundle;
 
+import com.myzony.zonynovelreader.Common.AppContext;
+
 /**
  * Created by mo199 on 2016/5/28.
  */
@@ -32,12 +34,7 @@ public class AllNovelFragment extends BaseNovelsRefreshFragment {
      */
     @Override
     protected String getItemURL(int page) {
-        if(page==1)
-        {
-            return String.format("http://m.00ksw.com/s_top_weekvisit/");
-        }else{
-            return String.format("http://m.00ksw.com/s_top_weekvisit/%d/",page);
-        }
+        return AppContext.getPlug().getItemURL(page);
     }
 
     /**
