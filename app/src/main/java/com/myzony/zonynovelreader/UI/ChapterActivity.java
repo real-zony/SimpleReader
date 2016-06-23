@@ -21,9 +21,11 @@ import com.myzony.zonynovelreader.NovelCore.Plug_Callback_Novel;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.bean.ChapterInfo;
 import com.myzony.zonynovelreader.bean.NovelInfo;
+import com.myzony.zonynovelreader.cache.CacheManager;
 import com.myzony.zonynovelreader.utils.RegexUtils;
 import com.myzony.zonynovelreader.widget.TipInfoLayout;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,11 +43,9 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
     public static String VIEW_CHAPTER_INFO = "view_chapter_info";
 
     private NovelInfo currentNovelInfo;
-    private final Context context = this;
-    private RequestQueue m_Queue;
-
-    private ArrayList<String> chapter_list_url;
     private ArrayAdapter<String> chapter_list_title;
+    private ArrayList<ChapterInfo> chapterInfoArrayList;
+    private String cacheKey;
 
     @InjectView(R.id.chapter_listview)
     ListView chapterListView;
@@ -64,12 +64,12 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
         toolbar.setSubtitleTextColor(getResources().getColor(android.R.color.white));
         // 初始化视图
         initView();
+
+        cacheKey = VIEW_CHAPTER_INFO + currentNovelInfo.getUrl().replace("/","");
     }
 
     private void initView(){
         chapter_list_title = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-        chapter_list_url = new ArrayList<String>();
-
         tipInfoLayout.setLoading();
         setListView(false);
 
@@ -81,9 +81,8 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
                 Intent intent = new Intent(ChapterActivity.this,ReadActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("pos",position);
-                bundle.putString("url",chapter_list_url.get(position));
-                bundle.putSerializable("url_List",chapter_list_url);
-                bundle.putString("chapterName",chapter_list_title.getItem(position));
+                bundle.putString("novelUrl",currentNovelInfo.getUrl());
+                bundle.putSerializable("chapterInfoList",chapterInfoArrayList);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -118,8 +117,17 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
         }
     }
 
+    /**
+     * 检测该键是否有缓存数据
+     * @return 存在返回true，否则返回false
+     */
+    private boolean isReadCacheData(){
+        return CacheManager.isExistDataCache(this,cacheKey);
+    }
+
     @Override
     public void call_Chapter(ArrayList<ChapterInfo> list) {
+        chapterInfoArrayList = list;
         // 章节排序
         Collections.sort(list, new Comparator<ChapterInfo>() {
             @Override
@@ -130,10 +138,22 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
         // 循环添加到adapter
         for(int i=0;i<list.size();i++){
             chapter_list_title.add(list.get(i).getTitle());
-            chapter_list_url.add(list.get(i).getUrl());
         }
         // 刷新列表
         chapterListView.setAdapter(chapter_list_title);
         setListView(true);
+        // 检测是否有上次阅读位置信息
+        if(isReadCacheData()){
+            Serializable sri = CacheManager.readObject(this,cacheKey);
+            Integer lastPos = (Integer) sri;
+            // 自动加载
+            Intent intent = new Intent(ChapterActivity.this,ReadActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("pos",lastPos);
+            bundle.putString("novelUrl",currentNovelInfo.getUrl());
+            bundle.putSerializable("chapterInfoList",chapterInfoArrayList);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 }

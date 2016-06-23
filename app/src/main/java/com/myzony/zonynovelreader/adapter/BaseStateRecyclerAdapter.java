@@ -36,7 +36,7 @@ public abstract class BaseStateRecyclerAdapter<T> extends BaseRecyclerAdapter<T>
         state = STATE_FULL;
     }
 
-    // 判断条目是否是最后一位
+    // 判断条目是否在最后
     @Override
     public int getItemViewType(int position) {
         if (position + 1 == getItemCount()) {

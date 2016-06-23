@@ -23,7 +23,6 @@ public class CacheManager {
      * @param context 上下文
      * @param ser 序列化对象
      * @param file 目标文件
-     * @throws IOException 抛出IO异常
      */
     public static boolean saveObject(Context context, Serializable ser,
                                      String file) {
@@ -55,7 +54,6 @@ public class CacheManager {
      * @param context 上下文
      * @param file 目标文件
      * @return 读取成功的序列化对象
-     * @throws IOException
      */
     public static Serializable readObject(Context context, String file) {
         if (!isExistDataCache(context, file)) // 如果目标文件不存在

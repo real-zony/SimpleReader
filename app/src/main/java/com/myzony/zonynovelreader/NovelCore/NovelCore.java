@@ -8,8 +8,10 @@ import com.myzony.zonynovelreader.bean.NovelInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
+ * 所有Plug_xx的基类，其他阅读源请继承此基类。
  * Created by mo199 on 2016/5/25.
  */
 public abstract class NovelCore {
@@ -45,7 +47,6 @@ public abstract class NovelCore {
      * 用于Toast显示的上下文
      */
     protected Context context;
-
 
 
     /**
@@ -95,4 +96,6 @@ public abstract class NovelCore {
      * @return 加载好的数据
      */
     public abstract void getNovelData(String url,RequestQueue queue);
+
+    public abstract String getSearchUrl(String searchKey,int page);
 }

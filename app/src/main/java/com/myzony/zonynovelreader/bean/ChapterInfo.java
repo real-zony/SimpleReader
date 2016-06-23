@@ -1,10 +1,12 @@
 package com.myzony.zonynovelreader.bean;
 
+import java.io.Serializable;
+
 /**
  * 章节信息
  * Created by mo199 on 2016/6/21.
  */
-public class ChapterInfo {
+public class ChapterInfo implements Serializable{
     public String getUrl() {
         return url;
     }

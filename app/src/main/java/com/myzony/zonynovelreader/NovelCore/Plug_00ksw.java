@@ -13,6 +13,7 @@ import com.myzony.zonynovelreader.bean.NovelInfo;
 import com.myzony.zonynovelreader.utils.RegexUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 
 /**
@@ -113,6 +114,11 @@ public class Plug_00ksw extends NovelCore {
             }
         });
         queue.add(stringRequest);
+    }
+
+    @Override
+    public String getSearchUrl(String searchKey,int page) {
+        return String.format("http://zhannei.baidu.com/cse/search?q=%s&p=%d&s=13150090723783341603",searchKey,page-1);
     }
 
     /**

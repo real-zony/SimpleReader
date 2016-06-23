@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.util.AttributeSet;
 import android.view.InflateException;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,8 @@ import com.android.volley.toolbox.Volley;
 import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.NovelCore.Plug_CallBack_Read;
 import com.myzony.zonynovelreader.R;
+import com.myzony.zonynovelreader.bean.ChapterInfo;
+import com.myzony.zonynovelreader.cache.CacheManager;
 import com.myzony.zonynovelreader.utils.RegexUtils;
 import com.myzony.zonynovelreader.widget.TipInfoLayout;
 
@@ -42,13 +45,23 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
     @InjectView(R.id.tip_info)
     TipInfoLayout tipInfoLayout;
 
-    // 章节URL
+    /**
+     * 章节URL
+     */
     private String chapter_url;
-    // 章节列表
-    private ArrayList<String> chapter_list_url;
-    private int currentChapterPos;
+    /**
+     * 章节列表
+     */
+    private ArrayList<ChapterInfo> chapterInfoArrayList;
+    /**
+     * 当前章节位置
+     */
+    private Integer currentChapterPos;
+    /**
+     * 当前小说URL
+     */
+    private String currentNovelUrl;
     private RequestQueue mQueue;
-    private String currentChapterTitle;
 
     @Override
     protected int getLayoutView() {
@@ -60,10 +73,10 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
         super.onCreate(savedInstanceState);
         if(getIntent()!=null){
             Bundle bundle = getIntent().getExtras();
-            chapter_url = bundle.getString("url");
             currentChapterPos = bundle.getInt("pos");
-            chapter_list_url = (ArrayList<String>) bundle.getSerializable("url_List");
-            currentChapterTitle = bundle.getString("chapterName");
+            chapterInfoArrayList = (ArrayList<ChapterInfo>) bundle.getSerializable("chapterInfoList");
+            chapter_url = chapterInfoArrayList.get(currentChapterPos).getUrl();
+            currentNovelUrl = bundle.getString("novelUrl");
         }
 
         toolbar.setSubtitleTextColor(getResources().getColor(android.R.color.white));
@@ -87,10 +100,10 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
     }
 
     private void loadData() {
-        toolbar.setSubtitle(currentChapterTitle);
+        toolbar.setSubtitle(chapterInfoArrayList.get(currentChapterPos).getTitle());
 
         AppContext.getPlug().bindCB_Read(this);
-        AppContext.getPlug().getNovelData(chapter_url,mQueue);
+        AppContext.getPlug().getNovelData(chapterInfoArrayList.get(currentChapterPos).getUrl(),mQueue);
     }
 
     private void setWebView(boolean visiable){
@@ -107,23 +120,23 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
+                savePos();
                 finish();
                 return true;
             // 下一章
             case R.id.read_next:
-                if(currentChapterPos != chapter_list_url.size()){
+                if(currentChapterPos != chapterInfoArrayList.size()){
                     currentChapterPos++;
                 }
-                AppContext.getPlug().getNovelData(chapter_list_url.get(currentChapterPos),mQueue);
                 break;
             // 上一章
             case R.id.read_up:
                 if(currentChapterPos != 0) {
                     currentChapterPos--;
                 }
-                AppContext.getPlug().getNovelData(chapter_list_url.get(currentChapterPos),mQueue);
                 break;
         }
+        loadData();
         return super.onOptionsItemSelected(item);
     }
 
@@ -149,5 +162,18 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
             setWebView(false);
             tipInfoLayout.setLoadError("加载失败，请点击重试");
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            savePos();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void savePos(){
+        String cacheKey = ChapterActivity.VIEW_CHAPTER_INFO + currentNovelUrl.replace("/","");
+        CacheManager.saveObject(this,currentChapterPos,cacheKey);
     }
 }

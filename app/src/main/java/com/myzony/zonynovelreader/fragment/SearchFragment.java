@@ -2,6 +2,8 @@ package com.myzony.zonynovelreader.fragment;
 
 import android.os.Bundle;
 
+import com.myzony.zonynovelreader.Common.AppContext;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -19,7 +21,7 @@ public class SearchFragment extends BaseNovelsRefreshFragment {
 
     @Override
     protected String getItemURL(int page) {
-        return String.format("http://zhannei.baidu.com/cse/search?q=%s&p=%d&s=13150090723783341603",searchKey,page-1);
+        return AppContext.getPlug().getSearchUrl(searchKey,page);
     }
 
     public static SearchFragment newInstance(String searchKey) {
