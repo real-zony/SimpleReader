@@ -22,6 +22,9 @@ targetSdkVersion 23
 
 本项目界面设计参照于[http://git.oschina.net/Mr.LiaBin/my-oscgit-android](http://git.oschina.net/Mr.LiaBin/my-oscgit-android)
 
+##最新版本下载：
+http://git.oschina.net/jokers/SimpleReader/releases
+
 ##界面截图:  
 ![截图1](http://git.oschina.net/uploads/images/2016/0624/134851_a6441bc9_24648.png "截图1")  
 ![截图2](http://git.oschina.net/uploads/images/2016/0624/134907_bd7a5b1d_24648.png "截图2")  
