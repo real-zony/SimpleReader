@@ -1,6 +1,5 @@
 package com.myzony.zonynovelreader.UI;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,30 +7,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.NovelCore.Plug_CallBack_Chapter;
-import com.myzony.zonynovelreader.NovelCore.Plug_Callback_Novel;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.bean.ChapterInfo;
 import com.myzony.zonynovelreader.bean.NovelInfo;
 import com.myzony.zonynovelreader.cache.CacheManager;
-import com.myzony.zonynovelreader.utils.RegexUtils;
 import com.myzony.zonynovelreader.widget.TipInfoLayout;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-import java.util.regex.Matcher;
 
 import butterknife.InjectView;
 
@@ -65,7 +54,7 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
         // 初始化视图
         initView();
 
-        cacheKey = VIEW_CHAPTER_INFO + currentNovelInfo.getUrl().replace("/","");
+        cacheKey = VIEW_CHAPTER_INFO + currentNovelInfo.getUrl().replace("/","") + "_" +AppContext.flags;
     }
 
     private void initView(){

@@ -13,8 +13,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.Common.DoubleClickExitHelper;
+import com.myzony.zonynovelreader.Common.FontIconDrawable;
 import com.myzony.zonynovelreader.R;
+import com.myzony.zonynovelreader.fragment.BaseSwipeRefreshFragment;
 import com.myzony.zonynovelreader.fragment.MyNovelInfoTabFragment;
 
 import butterknife.InjectView;
@@ -50,6 +53,11 @@ public class MainActivity extends BaseActivity{
 
         setupDrawerContent(mNavigationView);
         initMainContent(currentNavViewMenuItem);
+
+        sharedPreferences = getSharedPreferences(BaseSwipeRefreshFragment.PLUG_SELECT,0);
+        int flags = sharedPreferences.getInt(BaseSwipeRefreshFragment.PLUG_SELECT,0);
+        AppContext.flags = flags;
+        AppContext.setPlug(AppContext.plugs[flags]);
     }
 
     @Override
@@ -110,6 +118,7 @@ public class MainActivity extends BaseActivity{
         Menu menu = navigationView.getMenu();
         MenuItem currentMenuItem = menu.findItem(currentNavViewMenuItem);
         currentMenuItem.setChecked(true);
+        currentMenuItem.setIcon(FontIconDrawable.inflate(this,R.xml.icon_novel_my_xml));
 
         toolbar.setTitle(currentMenuItem.getTitle());
         // 取消掉右上角的返回箭头

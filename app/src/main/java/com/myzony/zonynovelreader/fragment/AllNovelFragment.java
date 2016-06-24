@@ -36,13 +36,4 @@ public class AllNovelFragment extends BaseNovelsRefreshFragment {
     protected String getItemURL(int page) {
         return AppContext.getPlug().getItemURL(page);
     }
-
-    /**
-     * 获得缓存Key
-     * @return Key
-     */
-    @Override
-    protected String getCacheKey() {
-        return ALL_PROJECT_CACHE_PREFIX + projectType + "_";
-    }
 }

@@ -111,4 +111,13 @@ public abstract class NovelCore {
      * @return URL
      */
     public abstract String getItemURL(int page);
+
+    /**
+     * 清除容器
+     */
+    public void clear(){
+        infoListUrl.clear();
+        infoList.clear();
+        chapterInfoList.clear();
+    }
 }

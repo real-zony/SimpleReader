@@ -34,20 +34,28 @@ public class AppContext extends Application {
      * @param plug 实例化的NovelCore子类。
      */
     public static void setPlug(NovelCore plug) {
+        // 清空列表
+        plug.clear();
         AppContext.plug = plug;
     }
 
     private static NovelCore plug;
-
+    public static NovelCore[] plugs;
     private static AppContext appContext;
+    public static int flags;
 
     @Override
     public void onCreate() {
         super.onCreate();
         setDefaultTheme();
         appContext = this;
-        // 初始化小说源对象
-        plug = new Plug_bxwx();
+        initPlug();
+        FontIconTypefaceHolder.init(getAssets(), "fontawesome-webfont.ttf");
+    }
+
+    private void initPlug(){
+        plugs = new NovelCore[]{new Plug_00ksw(),new Plug_bxwx()};
+        plug = plugs[0];
     }
 
     // 获得APPContext实例

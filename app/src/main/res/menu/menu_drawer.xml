@@ -7,18 +7,6 @@
             android:checked="true"
             android:icon="@android:drawable/ic_dialog_email"
             android:title="我的小说" />
-        <item
-            android:id="@+id/menu_item_myself"
-            android:icon="@android:drawable/ic_dialog_alert"
-            android:title="保留栏位1" />
-        <item
-            android:id="@+id/menu_item_language"
-            android:icon="@android:drawable/ic_dialog_map"
-            android:title="保留栏位2" />
-        <item
-            android:id="@+id/menu_item_shake"
-            android:icon="@android:drawable/ic_menu_share"
-            android:title="保留栏位3" />
     </group>
 
     <item android:title="其他">

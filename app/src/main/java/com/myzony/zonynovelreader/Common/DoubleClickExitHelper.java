@@ -1,9 +1,13 @@
 package com.myzony.zonynovelreader.Common;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.widget.Toast;
+
+import com.myzony.zonynovelreader.NovelCore.Plug_00ksw;
+import com.myzony.zonynovelreader.fragment.BaseSwipeRefreshFragment;
 
 /**
  * Created by mo199 on 2016/6/13.
@@ -47,6 +51,16 @@ public class DoubleClickExitHelper {
             if(exitToast != null){
                 exitToast.cancel();
             }
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences(BaseSwipeRefreshFragment.PLUG_SELECT,0);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            if(AppContext.getPlug().getClass() == Plug_00ksw.class){
+                editor.putInt(BaseSwipeRefreshFragment.PLUG_SELECT,0);
+            }else{
+                editor.putInt(BaseSwipeRefreshFragment.PLUG_SELECT,1);
+            }
+            editor.commit();
+
             context.finish();
         }
         return true;

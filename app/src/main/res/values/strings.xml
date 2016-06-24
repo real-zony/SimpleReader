@@ -13,7 +13,7 @@
     <string name="right_hand_mode_key">right_hand_mode_key</string>
 
     <string name="clear_cache_data_key">clear_cache_data_key</string>
-    <string name="clear_cache_data">清空缓存</string>
+    <string name="clear_cache_data">清空小说缓存</string>
     <string name="clear_cache_success">缓存清除成功</string>
     <string name="clear_cache_fail">缓存清除失败</string>
 

@@ -19,7 +19,7 @@ import butterknife.InjectView;
  * Created by mo199 on 2016/5/26.
  */
 public abstract class BaseActivity extends AppCompatActivity{
-    public static final String PREFERENCE_FILE_NAME = "mygitosc_settings";
+    public static final String PREFERENCE_FILE_NAME = "SimpleReader_Setting";
     protected SharedPreferences sharedPreferences;
     protected SharedPreferences.Editor editor;
 

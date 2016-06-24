@@ -5,5 +5,6 @@ package com.myzony.zonynovelreader.Common;
  */
 public class NovelTab {
     public static String FeaturedNovel = "featured";
+    public static String CacheNovel = "cache";
     public static String LocalNovel = "Local";
 }

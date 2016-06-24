@@ -1,6 +1,11 @@
 package com.myzony.zonynovelreader.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,25 +23,27 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.Common.DividerItemDecoration;
+import com.myzony.zonynovelreader.Common.FontIconDrawable;
+import com.myzony.zonynovelreader.NovelCore.Plug_00ksw;
 import com.myzony.zonynovelreader.NovelCore.Plug_Callback_Novel;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.UI.BaseActivity;
 import com.myzony.zonynovelreader.adapter.BaseStateRecyclerAdapter;
 import com.myzony.zonynovelreader.bean.NovelInfo;
-import com.myzony.zonynovelreader.cache.CacheManager;
 import com.myzony.zonynovelreader.widget.TipInfoLayout;
 
-import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.util.List;
+
+import com.getbase.floatingactionbutton.FloatingActionButton;
 
 /**
  * Created by mo199 on 2016/5/28.
  */
 public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements SwipeRefreshLayout.OnRefreshListener,Plug_Callback_Novel {
-
+    public static String PLUG_SELECT="plug_select";
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private TipInfoLayout tipInfoLayout;
@@ -75,6 +82,26 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
         super.onViewCreated(view, savedInstanceState);
         tipInfoLayout = (TipInfoLayout) view.findViewById(R.id.tip_info);
         tipInfoLayout.setVisibility(View.GONE);
+
+        // 初始化浮动按钮
+        final FloatingActionButton actionButton = (FloatingActionButton) view.findViewById(R.id.action_a);
+        final FloatingActionsMenu actionsMenu = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
+        actionButton.setIconDrawable(fixIconFontDrawable(FontIconDrawable.inflate(getActivity(),R.xml.icon_replace_source)));
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(AppContext.getPlug().getClass() == Plug_00ksw.class){
+                    AppContext.setPlug(AppContext.plugs[1]);
+                }else{
+                    AppContext.setPlug(AppContext.plugs[0]);
+                }
+                mDataAdapter.clear();
+                actionsMenu.toggle();
+                hideRecyclerView(true);
+                tipInfoLayout.setLoading();
+                onRefresh();
+            }
+        });
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresher);
         if (getActivity() instanceof BaseActivity) {
@@ -152,39 +179,8 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
                 mDataAdapter.notifyDataSetChanged();
             }
         }
-        String cacheKey = getCacheKey() + page;
 
-        if (isReadCacheData(refreshFlag, page, cacheKey)) {
-            AppContext.log("requestDataFromCache " + cacheKey);
-            requestDataFromCache(cacheKey);
-        } else {
-            requestDataFromNetwork(page);
-        }
-    }
-
-    /**
-     * 检测该键是否有匹配的缓存数据
-     * @param refreshFlag 刷新标识
-     * @param page 页码
-     * @param cacheKey 键
-     * @return 有的话返回true，没有的话返回false;
-     */
-    private boolean isReadCacheData(boolean refreshFlag, int page, String cacheKey) {
-        if (CacheManager.isExistDataCache(getActivity(), cacheKey) && !refreshFlag && page == 1) {
-            return true;
-        } else if (CacheManager.isExistDataCache(getActivity(), cacheKey) &&
-                !CacheManager.isCacheDataFailure(getActivity(), cacheKey) && page != 1) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 从缓存当中获得数据
-     * @param key 键
-     */
-    private void requestDataFromCache(String key) {
-        new ReadCacheTask(getActivity()).execute(key);
+        requestDataFromNetwork(page);
     }
 
     /**
@@ -225,78 +221,6 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
         refreshingFlag = true;
         swipeRefreshLayout.setEnabled(false);
         requestData(1, true);
-    }
-
-    /**
-     * 异步缓存存储
-     */
-    private class SaveCacheTask extends AsyncTask<Void, Void, Void> {
-        private final WeakReference<Context> mContext;
-        private final Serializable seri;
-        private final String key;
-
-        private SaveCacheTask(Context context, Serializable serializable, String key) {
-            mContext = new WeakReference<Context>(context);
-            this.seri = serializable;
-            this.key = key;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            CacheManager.saveObject(mContext.get(), seri, key);
-            return null;
-        }
-    }
-
-    /**
-     * 异步缓存读取
-     */
-    private class ReadCacheTask extends AsyncTask<String, Void, Serializable> {
-        private final WeakReference<Context> mContext;
-
-        private ReadCacheTask(Context context) {
-            mContext = new WeakReference<Context>(context);
-        }
-
-        @Override
-        protected Serializable doInBackground(String... params) {
-            Serializable seri = CacheManager.readObject(mContext.get(),
-                    params[0]);
-            if (seri == null) {
-                return null;
-            } else {
-                return seri;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Serializable list) {
-            super.onPostExecute(list);
-            if (list != null) {
-                readCacheListSuccess(list);
-            } else {
-                readCacheListSuccess(null);
-            }
-        }
-    }
-
-    /**
-     * 缓存读取成功
-     * @param serializable 读取出来的序列化对象 LIST<T>
-     */
-    private void readCacheListSuccess(Serializable serializable) {
-        if (serializable == null) {
-            requestingFlag = false;
-            requestData(currentPage + 1, true);
-            return;
-        }
-        List<T> list = (List<T>) serializable;
-        if (list.size() == 0) {
-            requestingFlag = false;
-            requestData(currentPage + 1, true);
-        } else {
-            loadDataComplete(list);
-        }
     }
 
     /**
@@ -350,7 +274,7 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
                 if (!refreshingFlag) {
                     currentPage++;
                 }
-                new SaveCacheTask(getActivity(), (Serializable) list, getCacheKey() + currentPage).execute();
+                // 异步存储
             } else {
                 if (mDataAdapter.getItemCount() == 1) {
                     hideRecyclerView(true);
@@ -397,9 +321,20 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
         super.onDestroy();
     }
 
-    protected abstract boolean itemCompareTo(List<T> list, T item);
+    /**
+     * 解决Drawable资源在floatingbutton内显示错位的问题
+     * @param iconDrawable 源资源文件
+     * @return 正确的资源文件
+     */
+    private Drawable fixIconFontDrawable(Drawable iconDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        iconDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        iconDrawable.draw(canvas);
+        return new BitmapDrawable(getResources(), bitmap);
+    }
 
-    protected abstract String getCacheKey();
+    protected abstract boolean itemCompareTo(List<T> list, T item);
 
     protected abstract BaseStateRecyclerAdapter getRecyclerAdapter();
 

@@ -15,7 +15,6 @@ import com.myzony.zonynovelreader.utils.RegexUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Objects;
 import java.util.regex.Matcher;
 
 /**
@@ -24,7 +23,6 @@ import java.util.regex.Matcher;
 public class Plug_00ksw extends NovelCore {
     @Override
     public void getNovelUrl(String targetHTML, RequestQueue queue) {
-        AppContext.PAGE_SIZE = 10;
         this.mQueue = queue;
         // 清空容器
         infoList.clear();
@@ -49,6 +47,7 @@ public class Plug_00ksw extends NovelCore {
                     }
                 }
             }
+            AppContext.PAGE_SIZE = infoListUrl.size();
             getNovelInfo();
         } catch (UnsupportedEncodingException exp) {
             return;
@@ -79,6 +78,7 @@ public class Plug_00ksw extends NovelCore {
                 Toast.makeText(context, "出现错误", Toast.LENGTH_LONG).show();
             }
         });
+        stringRequest.setShouldCache(false);
         mQueue.add(stringRequest);
     }
 
@@ -101,6 +101,7 @@ public class Plug_00ksw extends NovelCore {
                 readLoadCheck(null);
             }
         });
+        stringRequest.setShouldCache(false);
         queue.add(stringRequest);
     }
 
@@ -176,6 +177,7 @@ public class Plug_00ksw extends NovelCore {
                     novelLoadCheck();
                 }
             });
+            stringRequest.setShouldCache(false);
             mQueue.add(stringRequest);
         }
     }
@@ -219,6 +221,7 @@ public class Plug_00ksw extends NovelCore {
                     Toast.makeText(context, "出现错误", Toast.LENGTH_LONG).show();
                 }
             });
+            stringRequest.setShouldCache(false);
             mQueue.add(stringRequest);
         }
     }

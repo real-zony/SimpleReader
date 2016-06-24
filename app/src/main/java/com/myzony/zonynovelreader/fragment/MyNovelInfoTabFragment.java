@@ -12,8 +12,9 @@ public class MyNovelInfoTabFragment extends BaseTabViewpageFragment {
     protected void initViewpagerFragmentList(List<Fragment> viewpagerFragmentList, List<String> mTitles) {
         mTitles.add("推荐小说");
         viewpagerFragmentList.add(AllNovelFragment.newInstance(NovelTab.FeaturedNovel));
-
-        //mTitles.add("本地小说");
+        mTitles.add("缓存的小说");
+        //viewpagerFragmentList.add(AllNovelFragment.newInstance(NovelTab.CacheNovel));
+        mTitles.add("本地TXT小说");
         //viewpagerFragmentList.add(AllNovelFragment.newInstance(NovelTab.LocalNovel));
     }
 }

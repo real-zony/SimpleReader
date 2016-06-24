@@ -26,6 +26,9 @@ public class NovelInfoAdapter extends BaseStateRecyclerAdapter<NovelInfo> {
     private ImageLoader mImageLoader;
     private RequestQueue mQueue;
 
+    /**
+     * 章节条目点击
+     */
     private View.OnClickListener novelInfoClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -67,6 +70,7 @@ public class NovelInfoAdapter extends BaseStateRecyclerAdapter<NovelInfo> {
             // 加载小说封面
             ImageLoader.ImageListener listener = ImageLoader.getImageListener(novelInfoViewHolder.iv_novel,R.drawable.mini_avatar,R.drawable.mini_avatar);
             mImageLoader.get(novelInfo.getImageUrl(),listener);
+            mQueue.getCache().clear();
             novelInfoViewHolder.itemView.setTag(novelInfo);
             // 设置条目响应时间
             novelInfoViewHolder.itemView.setOnClickListener(novelInfoClickListener);
@@ -96,7 +100,7 @@ public class NovelInfoAdapter extends BaseStateRecyclerAdapter<NovelInfo> {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(context,"测试文本",Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,"测试文本",Toast.LENGTH_LONG).show();
         }
     }
 }
