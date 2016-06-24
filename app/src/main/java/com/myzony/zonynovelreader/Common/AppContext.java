@@ -8,7 +8,6 @@ import com.myzony.zonynovelreader.NovelCore.NovelCore;
 import com.myzony.zonynovelreader.NovelCore.Plug_00ksw;
 import com.myzony.zonynovelreader.NovelCore.Plug_bxwx;
 import com.myzony.zonynovelreader.R;
-import com.myzony.zonynovelreader.bean.NovelInfo;
 
 /**
  * Created by mo199 on 2016/5/27.

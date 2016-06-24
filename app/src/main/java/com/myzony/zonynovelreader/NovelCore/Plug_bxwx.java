@@ -1,7 +1,6 @@
 package com.myzony.zonynovelreader.NovelCore;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;

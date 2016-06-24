@@ -8,7 +8,6 @@ import com.myzony.zonynovelreader.bean.NovelInfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 所有Plug_xx的基类，其他阅读源请继承此基类。

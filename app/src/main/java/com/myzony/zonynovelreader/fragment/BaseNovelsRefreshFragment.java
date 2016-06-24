@@ -4,7 +4,6 @@ import com.myzony.zonynovelreader.adapter.BaseStateRecyclerAdapter;
 import com.myzony.zonynovelreader.adapter.NovelInfoAdapter;
 import com.myzony.zonynovelreader.bean.NovelInfo;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**

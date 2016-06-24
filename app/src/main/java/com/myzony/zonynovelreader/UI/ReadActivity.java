@@ -1,54 +1,36 @@
 package com.myzony.zonynovelreader.UI;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.LayoutInflaterCompat;
-import android.util.AttributeSet;
-import android.view.InflateException;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.NovelCore.Plug_CallBack_Read;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.bean.ChapterInfo;
 import com.myzony.zonynovelreader.cache.CacheManager;
-import com.myzony.zonynovelreader.utils.RegexUtils;
 import com.myzony.zonynovelreader.widget.TipInfoLayout;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 
 import butterknife.InjectView;
 
 /**
  * Created by mo199 on 2016/6/5.
  */
-public class ReadActivity extends BaseActivity implements Plug_CallBack_Read {
+public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
 
     @InjectView(R.id.webView)
     WebView webView;
     @InjectView(R.id.tip_info)
     TipInfoLayout tipInfoLayout;
 
-    /**
-     * 章节URL
-     */
-    private String chapter_url;
     /**
      * 章节列表
      */
@@ -71,11 +53,10 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent() != null) {
+        if(getIntent()!=null){
             Bundle bundle = getIntent().getExtras();
             currentChapterPos = bundle.getInt("pos");
             chapterInfoArrayList = (ArrayList<ChapterInfo>) bundle.getSerializable("chapterInfoList");
-            chapter_url = chapterInfoArrayList.get(currentChapterPos).getUrl();
             currentNovelUrl = bundle.getString("novelUrl");
         }
 
@@ -103,14 +84,14 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read {
         toolbar.setSubtitle(chapterInfoArrayList.get(currentChapterPos).getTitle());
 
         AppContext.getPlug().bindCB_Read(this);
-        AppContext.getPlug().getNovelData(chapterInfoArrayList.get(currentChapterPos).getUrl(), mQueue);
+        AppContext.getPlug().getNovelData(chapterInfoArrayList.get(currentChapterPos).getUrl(),mQueue);
     }
 
-    private void setWebView(boolean visiable) {
-        if (visiable) {
+    private void setWebView(boolean visiable){
+        if(visiable){
             webView.setVisibility(View.VISIBLE);
             tipInfoLayout.setVisibility(View.GONE);
-        } else {
+        }else{
             webView.setVisibility(View.GONE);
             tipInfoLayout.setVisibility(View.VISIBLE);
         }
@@ -118,20 +99,20 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch (item.getItemId()){
             case android.R.id.home:
                 savePos();
                 finish();
                 return true;
             // 下一章
             case R.id.read_next:
-                if (currentChapterPos != chapterInfoArrayList.size()) {
+                if(currentChapterPos != chapterInfoArrayList.size()){
                     currentChapterPos++;
                 }
                 break;
             // 上一章
             case R.id.read_up:
-                if (currentChapterPos != 0) {
+                if(currentChapterPos != 0) {
                     currentChapterPos--;
                 }
                 break;
@@ -149,16 +130,16 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read {
     // 创建菜单
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_read, menu);
+        getMenuInflater().inflate(R.menu.menu_read,menu);
         return true;
     }
 
     @Override
     public void call_Read(String data) {
-        if (data != null) {
+        if(data != null){
             setWebView(true);
             webView.loadDataWithBaseURL(null, data, "text/html", "utf-8", null);
-        } else {
+        }else{
             setWebView(false);
             tipInfoLayout.setLoadError("加载失败，请点击重试");
         }
@@ -166,14 +147,14 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
             savePos();
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void savePos() {
-        String cacheKey = ChapterActivity.VIEW_CHAPTER_INFO + currentNovelUrl.replace("/", "") + "_" + AppContext.flags;
-        CacheManager.saveObject(this, currentChapterPos, cacheKey);
+    private void savePos(){
+        String cacheKey = ChapterActivity.VIEW_CHAPTER_INFO + currentNovelUrl.replace("/","") + "_" +AppContext.flags;
+        CacheManager.saveObject(this,currentChapterPos,cacheKey);
     }
 }
