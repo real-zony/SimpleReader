@@ -2,4 +2,5 @@
 <resources>
     <string name="icon_novel_my">\uf0f6</string>
     <string name="icon_replace_source">\uf079</string>
+    <string name="icon_cached_novel">\uf0ed</string>
 </resources>

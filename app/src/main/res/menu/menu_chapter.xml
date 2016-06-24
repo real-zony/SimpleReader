@@ -4,6 +4,6 @@
     <item
         android:id="@+id/action_cachedNovel"
         android:orderInCategory="100"
-        android:title="@string/cachedNovel"
-        app:showAsAction="never" />
+        android:title="缓存小说"
+        app:showAsAction="always" />
 </menu>

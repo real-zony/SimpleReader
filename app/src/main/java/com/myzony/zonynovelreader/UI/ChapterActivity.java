@@ -3,6 +3,8 @@ package com.myzony.zonynovelreader.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -10,6 +12,7 @@ import android.widget.ListView;
 
 import com.android.volley.toolbox.Volley;
 import com.myzony.zonynovelreader.Common.AppContext;
+import com.myzony.zonynovelreader.Common.FontIconDrawable;
 import com.myzony.zonynovelreader.NovelCore.Plug_CallBack_Chapter;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.bean.ChapterInfo;
@@ -144,5 +147,14 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
             intent.putExtras(bundle);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_chapter,menu);
+
+        MenuItem item = menu.findItem(R.id.action_cachedNovel);
+        item.setIcon(FontIconDrawable.inflate(this,R.xml.icon_cached_novel_xml));
+        return true;
     }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-icon
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:text="@string/icon_cached_novel"
+    app:textSize="24dp"
+    app:textColor="#ffffff" />
