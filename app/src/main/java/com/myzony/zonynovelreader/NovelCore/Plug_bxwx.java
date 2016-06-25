@@ -24,8 +24,7 @@ public class Plug_bxwx extends NovelCore {
     public void getNovelUrl(String targetHTML, RequestQueue queue) {
         this.mQueue = queue;
         // 清空容器
-        infoList.clear();
-        infoListUrl.clear();
+        clear();
 
         try{
             String request = new String(targetHTML.getBytes("ISO-8859-1"),"gbk");

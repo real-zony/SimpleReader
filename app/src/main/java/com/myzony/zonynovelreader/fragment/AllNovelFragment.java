@@ -8,23 +8,15 @@ import com.myzony.zonynovelreader.Common.AppContext;
  * Created by mo199 on 2016/5/28.
  */
 public class AllNovelFragment extends BaseNovelsRefreshFragment {
-    private String ALL_PROJECT_CACHE_PREFIX = "project_all_";
-    private String projectType;
 
-    public static AllNovelFragment newInstance(String projectType) {
+    public static AllNovelFragment newInstance() {
         AllNovelFragment fragment = new AllNovelFragment();
-        Bundle args = new Bundle();
-        args.putString(PROJECT_TYPE, projectType);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            projectType = getArguments().getString(PROJECT_TYPE);
-        }
     }
 
     /**

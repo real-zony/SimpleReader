@@ -1,9 +1,11 @@
 package com.myzony.zonynovelreader.fragment;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -25,13 +27,17 @@ import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.Common.DividerItemDecoration;
 import com.myzony.zonynovelreader.Common.FontIconDrawable;
 import com.myzony.zonynovelreader.NovelCore.Plug_00ksw;
+import com.myzony.zonynovelreader.NovelCore.Plug_Cache;
 import com.myzony.zonynovelreader.NovelCore.Plug_Callback_Novel;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.UI.BaseActivity;
 import com.myzony.zonynovelreader.adapter.BaseStateRecyclerAdapter;
 import com.myzony.zonynovelreader.bean.NovelInfo;
+import com.myzony.zonynovelreader.cache.CacheManager;
 import com.myzony.zonynovelreader.widget.TipInfoLayout;
 
+import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -39,8 +45,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 /**
  * Created by mo199 on 2016/5/28.
  */
-public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements SwipeRefreshLayout.OnRefreshListener,Plug_Callback_Novel {
-    public static String PLUG_SELECT="plug_select";
+public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements SwipeRefreshLayout.OnRefreshListener, Plug_Callback_Novel {
+    public static String PLUG_SELECT = "plug_select";
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private TipInfoLayout tipInfoLayout;
@@ -83,13 +89,13 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
         // 初始化浮动按钮
         final FloatingActionButton actionButton = (FloatingActionButton) view.findViewById(R.id.action_a);
         final FloatingActionsMenu actionsMenu = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
-        actionButton.setIconDrawable(fixIconFontDrawable(FontIconDrawable.inflate(getActivity(),R.xml.icon_replace_source)));
+        actionButton.setIconDrawable(fixIconFontDrawable(FontIconDrawable.inflate(getActivity(), R.xml.icon_replace_source)));
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(AppContext.getPlug().getClass() == Plug_00ksw.class){
+                if (AppContext.getPlug().getClass() == Plug_00ksw.class) {
                     AppContext.setPlug(AppContext.plugs[1]);
-                }else{
+                } else {
                     AppContext.setPlug(AppContext.plugs[0]);
                 }
                 mDataAdapter.clear();
@@ -147,7 +153,8 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
 
     /**
      * 请求数据
-     * @param page 页码
+     *
+     * @param page        页码
      * @param refreshFlag 刷新标识
      */
     private void requestData(int page, boolean refreshFlag) {
@@ -182,6 +189,7 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
 
     /**
      * 页面读取成功回调
+     *
      * @param list 返回读取成功的list
      */
     @Override
@@ -191,26 +199,37 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
 
     /**
      * 请求网络数据
+     *
      * @param page 页码
      */
     private void requestDataFromNetwork(final int page) {
         AppContext.log("requestDataFromNetwork:" + getItemURL(page));
-
-        listRequest = new StringRequest(getItemURL(page),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        AppContext.getPlug().bindCB_Novel(baseSwipeRefreshFragment);
-                        AppContext.getPlug().getNovelUrl(response,mQueue);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        loadDataComplete(null);
-                    }
-                });
-        mQueue.add(listRequest);
+        if (!getItemURL(page).equals(CacheNovelFragment.NOVEL_CACHE_PREFIX)){
+            listRequest = new StringRequest(getItemURL(page),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            AppContext.getPlug().bindCB_Novel(baseSwipeRefreshFragment);
+                            AppContext.getPlug().getNovelUrl(response, mQueue);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            loadDataComplete(null);
+                        }
+                    });
+            mQueue.add(listRequest);
+        }else{ // 使用缓存数据
+                AppContext.getCachePlug().cacheContext = getActivity();
+                AppContext.getCachePlug().bindCB_Novel(baseSwipeRefreshFragment);
+                if (isReadCacheData(CacheNovelFragment.NOVEL_CACHE_PREFIX)) {
+                    AppContext.getCachePlug().getNovelUrl(null,null);
+                } else {
+                    hideRecyclerView(true);
+                    tipInfoLayout.setLoadError("没有缓存数据！");
+                }
+        }
     }
 
     @Override
@@ -221,14 +240,30 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
     }
 
     /**
+     * 检测该键是否有匹配的缓存数据
+     * @param cacheKey 键
+     * @return 有的话返回true，没有的话返回false;
+     */
+    private boolean isReadCacheData(String cacheKey) {
+        if (CacheManager.isExistDataCache(getActivity(), cacheKey)) {
+            return true;
+        } else if (CacheManager.isExistDataCache(getActivity(), cacheKey) &&
+                !CacheManager.isCacheDataFailure(getActivity(), cacheKey)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 数据加载成功
+     *
      * @param list NovelInfo列表
      */
     public void loadDataComplete(List<T> list) {
         requestingFlag = false;
 
         if (list == null) {
-            Toast.makeText(getActivity(), getString(R.string.request_data_error_hint),Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getString(R.string.request_data_error_hint), Toast.LENGTH_LONG).show();
             if (mDataAdapter.getItemCount() == 1) {
                 hideRecyclerView(true);
                 tipInfoLayout.setLoadError();
@@ -293,6 +328,7 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
 
     /**
      * 隐藏列表，显示tipinfo
+     *
      * @param visiable
      */
     private void hideRecyclerView(boolean visiable) {
@@ -320,6 +356,7 @@ public abstract class BaseSwipeRefreshFragment<T> extends Fragment implements Sw
 
     /**
      * 解决Drawable资源在floatingbutton内显示错位的问题
+     *
      * @param iconDrawable 源资源文件
      * @return 正确的资源文件
      */

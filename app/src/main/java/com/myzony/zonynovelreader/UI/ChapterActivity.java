@@ -157,4 +157,13 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
         item.setIcon(FontIconDrawable.inflate(this,R.xml.icon_cached_novel_xml));
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_cachedNovel){
+            AppContext.getCachePlug().addToList(currentNovelInfo);
+            AppContext.getCachePlug().saveCache(this);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

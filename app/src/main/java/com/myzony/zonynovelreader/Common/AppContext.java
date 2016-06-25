@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.myzony.zonynovelreader.NovelCore.NovelCore;
 import com.myzony.zonynovelreader.NovelCore.Plug_00ksw;
+import com.myzony.zonynovelreader.NovelCore.Plug_Cache;
 import com.myzony.zonynovelreader.NovelCore.Plug_bxwx;
 import com.myzony.zonynovelreader.R;
 
@@ -40,6 +41,12 @@ public class AppContext extends Application {
 
     private static NovelCore plug;
     public static NovelCore[] plugs;
+
+    public static Plug_Cache getCachePlug() {
+        return cachePlug;
+    }
+    private static Plug_Cache cachePlug;
+
     private static AppContext appContext;
     public static int flags;
 
@@ -55,6 +62,7 @@ public class AppContext extends Application {
     private void initPlug(){
         plugs = new NovelCore[]{new Plug_00ksw(),new Plug_bxwx()};
         plug = plugs[0];
+        cachePlug = new Plug_Cache();
     }
 
     // 获得APPContext实例

@@ -17,7 +17,7 @@ public abstract class NovelCore {
     /**
      * 小说Url列表
      */
-    protected ArrayList<String>infoListUrl = new ArrayList<String>();
+    protected ArrayList<String> infoListUrl = new ArrayList<String>();
     /**
      * 小说信息列表
      */
