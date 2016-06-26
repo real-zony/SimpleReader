@@ -26,7 +26,7 @@ targetSdkVersion 23
 http://git.oschina.net/jokers/SimpleReader/releases
 
 ##界面截图:  
-![截图1](http://git.oschina.net/uploads/images/2016/0624/134851_a6441bc9_24648.png "截图1")  
+![截图1](http://git.oschina.net/uploads/images/2016/0625/222028_6a80be30_24648.png "截图1")
 ![截图2](http://git.oschina.net/uploads/images/2016/0624/134907_bd7a5b1d_24648.png "截图2")  
 ![截图3](http://git.oschina.net/uploads/images/2016/0624/134924_b5caf5e2_24648.png "截图3")  
 ![截图4](http://git.oschina.net/uploads/images/2016/0624/134939_0f071b4b_24648.png "截图4")  
