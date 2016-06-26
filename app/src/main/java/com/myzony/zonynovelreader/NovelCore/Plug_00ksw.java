@@ -221,7 +221,7 @@ public class Plug_00ksw extends NovelCore {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    Toast.makeText(context, "出现错误", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(context, "出现错误", Toast.LENGTH_LONG).show();
                 }
             });
             stringRequest.setShouldCache(false);

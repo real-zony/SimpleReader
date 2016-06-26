@@ -216,6 +216,7 @@ public class Plug_Cache extends NovelCore {
         if (list.size() == 0) {
             callback_novel.call_Novel(null);
         } else {
+            this.infoList = list;
             callback_novel.call_Novel(list);
         }
     }
