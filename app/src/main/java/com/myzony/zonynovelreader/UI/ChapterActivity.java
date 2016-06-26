@@ -9,10 +9,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.Volley;
 import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.Common.FontIconDrawable;
+import com.myzony.zonynovelreader.NovelCore.Plug_CallBack_CacheSaved;
 import com.myzony.zonynovelreader.NovelCore.Plug_CallBack_Chapter;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.bean.ChapterInfo;
@@ -31,7 +33,7 @@ import butterknife.InjectView;
 /**
  * Created by mo199 on 2016/6/5.
  */
-public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapter {
+public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapter,Plug_CallBack_CacheSaved {
     public static String VIEW_CHAPTER_INFO = "view_chapter_info";
 
     private NovelInfo currentNovelInfo;
@@ -74,6 +76,7 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
                 Bundle bundle = new Bundle();
                 bundle.putInt("pos",position);
                 bundle.putString("novelUrl",currentNovelInfo.getUrl());
+                bundle.putString("novelTitle",currentNovelInfo.getName());
                 bundle.putSerializable("chapterInfoList",chapterInfoArrayList);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -81,8 +84,13 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
         });
 
         // 加载章节
-        AppContext.getPlug().bindCB_Chapter(this);
-        AppContext.getPlug().getChapterList(currentNovelInfo.getUrl(),this,Volley.newRequestQueue(this));
+        if(AppContext.getCachePlug().isExitsCachedChapter(currentNovelInfo.getName(),this)){
+            AppContext.getCachePlug().bindCB_Chapter(this);
+            AppContext.getCachePlug().getChapterList(currentNovelInfo.getName(),this,null);
+        }else{
+            AppContext.getPlug().bindCB_Chapter(this);
+            AppContext.getPlug().getChapterList(currentNovelInfo.getUrl(),this,Volley.newRequestQueue(this));
+        }
     }
 
     @Override
@@ -97,10 +105,10 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
 
     /**
      * 设置是否显示列表视图
-     * @param visiable true为显示，false为不显示
+     * @param visible true为显示，false为不显示
      */
-    private void setListView(boolean visiable){
-        if(visiable){
+    private void setListView(boolean visible){
+        if(visible){
             chapterListView.setVisibility(View.VISIBLE);
             tipInfoLayout.setVisibility(View.GONE);
         }else{
@@ -134,15 +142,17 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
         // 刷新列表
         chapterListView.setAdapter(chapter_list_title);
         setListView(true);
+
         // 检测是否有上次阅读位置信息
         if(isReadCacheData()){
+            Intent intent = new Intent(ChapterActivity.this,ReadActivity.class);
             Serializable sri = CacheManager.readObject(this,cacheKey);
             Integer lastPos = (Integer) sri;
             // 自动加载
-            Intent intent = new Intent(ChapterActivity.this,ReadActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt("pos",lastPos);
             bundle.putString("novelUrl",currentNovelInfo.getUrl());
+            bundle.putString("novelTitle",currentNovelInfo.getName());
             bundle.putSerializable("chapterInfoList",chapterInfoArrayList);
             intent.putExtras(bundle);
             startActivity(intent);
@@ -161,9 +171,18 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_cachedNovel){
+            AppContext.getCachePlug().bindCB_CacheSaved(this);
             AppContext.getCachePlug().addToList(currentNovelInfo);
-            AppContext.getCachePlug().saveCache(this);
+            AppContext.getCachePlug().saveCache(this,AppContext.getPlug().getChapterInfoList(),currentNovelInfo.getName());
+            setListView(false);
+            tipInfoLayout.setLoading("正在缓存小说...");
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void checkCacheSuccess(boolean loadFlags) {
+        setListView(true);
+        Toast.makeText(this,"缓存所有数据成功！",Toast.LENGTH_LONG).show();
     }
 }

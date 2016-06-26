@@ -43,6 +43,10 @@ public abstract class NovelCore {
      */
     protected Plug_CallBack_Read callBack_read;
     /**
+     * 回调接口-缓存成功
+     */
+    protected Plug_CallBack_CacheSaved callBack_cacheSaved;
+    /**
      * 用于Toast显示的上下文
      */
     protected Context context;
@@ -119,4 +123,16 @@ public abstract class NovelCore {
         infoList.clear();
         chapterInfoList.clear();
     }
+
+    /**
+     * 提供小说源页面数据，解析完成后返回解析完成的字符串。
+     * @return 解析成功的字符串
+     */
+    public abstract String resolveData(String source);
+
+    /**
+     * 获得章节列表
+     * @return 章节列表
+     */
+    public final ArrayList<ChapterInfo> getChapterInfoList(){return chapterInfoList;}
 }

@@ -15,6 +15,7 @@ import com.myzony.zonynovelreader.NovelCore.Plug_CallBack_Read;
 import com.myzony.zonynovelreader.R;
 import com.myzony.zonynovelreader.bean.ChapterInfo;
 import com.myzony.zonynovelreader.cache.CacheManager;
+import com.myzony.zonynovelreader.fragment.CacheNovelFragment;
 import com.myzony.zonynovelreader.widget.TipInfoLayout;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
      * 当前小说URL
      */
     private String currentNovelUrl;
+    private String currentNovelTitle;
     private RequestQueue mQueue;
 
     @Override
@@ -57,6 +59,7 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
             Bundle bundle = getIntent().getExtras();
             currentChapterPos = bundle.getInt("pos");
             chapterInfoArrayList = (ArrayList<ChapterInfo>) bundle.getSerializable("chapterInfoList");
+            currentNovelTitle = bundle.getString("novelTitle");
             currentNovelUrl = bundle.getString("novelUrl");
         }
 
@@ -82,9 +85,15 @@ public class ReadActivity extends BaseActivity implements Plug_CallBack_Read{
 
     private void loadData() {
         toolbar.setSubtitle(chapterInfoArrayList.get(currentChapterPos).getTitle());
+        String cacheKey =  CacheNovelFragment.NOVEL_CACHE_PREFIX + currentNovelTitle + "_" + chapterInfoArrayList.get(currentChapterPos).getTitle();
 
-        AppContext.getPlug().bindCB_Read(this);
-        AppContext.getPlug().getNovelData(chapterInfoArrayList.get(currentChapterPos).getUrl(),mQueue);
+        if(CacheManager.isExistDataCache(this, cacheKey)){
+            AppContext.getCachePlug().bindCB_Read(this);
+            AppContext.getCachePlug().getNovelData(cacheKey,null);
+        }else{
+            AppContext.getPlug().bindCB_Read(this);
+            AppContext.getPlug().getNovelData(chapterInfoArrayList.get(currentChapterPos).getUrl(),mQueue);
+        }
     }
 
     private void setWebView(boolean visiable){

@@ -59,6 +59,16 @@ public class TipInfoLayout extends FrameLayout {
     }
 
     /**
+     * 设置加载状态
+     * @param msg 加载时的文本
+     */
+    public void setLoading(String msg){
+        this.mPbProgressBar.setVisibility(View.VISIBLE);
+        this.mTvTipState.setVisibility(View.GONE);
+        this.mTvTipMsg.setText(msg);
+    }
+
+    /**
      * 加载错误
      * @param message 错误信息
      */

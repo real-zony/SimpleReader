@@ -88,9 +88,7 @@ public class Plug_bxwx extends NovelCore {
             public void onResponse(String s) {
                 try {
                     String request = new String(s.getBytes("ISO-8859-1"), "gbk");
-                    Matcher matcher = RegexUtils.newMatcher("<divid=\"nr1\">.+<divclass=\"nr_page\">", request.replaceAll("\\s*|\t|\n" +
-                            "|\n",""), true);
-                    readLoadCheck(matcher.group().toString());
+                    callBack_read.call_Read(resolveData(request));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -98,7 +96,7 @@ public class Plug_bxwx extends NovelCore {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                readLoadCheck(null);
+                callBack_read.call_Read(null);
             }
         });
         queue.add(stringRequest);
@@ -117,6 +115,13 @@ public class Plug_bxwx extends NovelCore {
     @Override
     public String getItemURL(int page) {
         return String.format("http://m.bxwx8.org/bsort1/0/%d.htm",page);
+    }
+
+    @Override
+    public String resolveData(String source) {
+        Matcher matcher = RegexUtils.newMatcher("<divid=\"nr1\">.+<divclass=\"nr_page\">", source.replaceAll("\\s*|\t|\n" +
+                "|\n",""), true);
+        return matcher.group().toString();
     }
 
     /**
@@ -241,13 +246,5 @@ public class Plug_bxwx extends NovelCore {
             });
             mQueue.add(stringRequest);
         }
-    }
-    /**
-     * 检测小说数据加载是否完成
-     *
-     * @param data 小说数据
-     */
-    private void readLoadCheck(String data) {
-        callBack_read.call_Read(data);
     }
 }

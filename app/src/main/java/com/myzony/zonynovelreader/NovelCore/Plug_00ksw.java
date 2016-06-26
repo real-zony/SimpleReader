@@ -86,9 +86,8 @@ public class Plug_00ksw extends NovelCore {
             @Override
             public void onResponse(String s) {
                 try {
-                    String resquest = new String(s.getBytes("ISO-8859-1"), "gbk");
-                    Matcher matcher = RegexUtils.newMatcher("<div id=\"nr1\">.+</div>", resquest, true);
-                    readLoadCheck(matcher.group().toString());
+                    String request = new String(s.getBytes("ISO-8859-1"), "gbk");
+                    callBack_read.call_Read(resolveData(request));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -96,7 +95,7 @@ public class Plug_00ksw extends NovelCore {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                readLoadCheck(null);
+                callBack_read.call_Read(null);
             }
         });
         stringRequest.setShouldCache(false);
@@ -122,6 +121,12 @@ public class Plug_00ksw extends NovelCore {
         }else{
             return String.format("http://m.00ksw.com/s_top_weekvisit/%d/",page);
         }
+    }
+
+    @Override
+    public String resolveData(String source) {
+        Matcher matcher = RegexUtils.newMatcher("<div id=\"nr1\">.+</div>", source, true);
+        return matcher.group().toString();
     }
 
     /**
@@ -243,14 +248,5 @@ public class Plug_00ksw extends NovelCore {
         if (currentPage == targetPage) {
             callBack_chapter.call_Chapter(chapterInfoList);
         }
-    }
-
-    /**
-     * 检测小说数据加载是否完成
-     *
-     * @param data 小说数据
-     */
-    private void readLoadCheck(String data) {
-        callBack_read.call_Read(data);
     }
 }
