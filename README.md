@@ -6,6 +6,7 @@ Android Studio 2.1.2
 compileSdkVersion 23  
 minSdkVersion 15  
 targetSdkVersion 23
+###使用前请确保你拥有android-23(6.0)的SDK Platform以及Android SDK Build-tools的23.0.3版本。
 
 ##使用到的第三方库：  
 
