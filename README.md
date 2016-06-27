@@ -7,7 +7,7 @@ compileSdkVersion 23
 minSdkVersion 15  
 targetSdkVersion 23
 ###<font color=red>使用前请确保你拥有android-23(6.0)的SDK Platform以及Android SDK Build-tools的23.0.3版本。</font>
-
+<font color=red>内容</font> 刚学markdown.
 ##使用到的第三方库：  
 
     compile 'com.getbase:floatingactionbutton:1.10.1'
