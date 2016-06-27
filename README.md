@@ -6,8 +6,8 @@ Android Studio 2.1.2
 compileSdkVersion 23  
 minSdkVersion 15  
 targetSdkVersion 23
-###<font color=red>使用前请确保你拥有android-23(6.0)的SDK Platform以及Android SDK Build-tools的23.0.3版本。</font>
-<font color="#4590a3" size = "6px">文字<font>
+###<font color=red>使用前请确保你拥有android-23(6.0)的SDK Platform以及Android SDK Build-tools的23.0.3版本。  
+
 ##使用到的第三方库：  
 
     compile 'com.getbase:floatingactionbutton:1.10.1'
