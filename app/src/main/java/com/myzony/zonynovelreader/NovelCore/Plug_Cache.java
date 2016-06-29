@@ -55,7 +55,7 @@ public class Plug_Cache extends NovelCore {
      */
     public void saveCache(Context context,ArrayList<ChapterInfo> list,String Title){
         callback_novel.call_Novel(infoList);
-        this.chapterInfoList = list;
+        chapterInfoList = list;
         new SaveCacheTask(context, (Serializable) infoList, CacheNovelFragment.NOVEL_CACHE_PREFIX).execute();
         new SaveCacheTask(context,chapterInfoList,CacheNovelFragment.NOVEL_CACHE_PREFIX + Title + "_").execute();
         new SaveCacheTask_NovelData(context,CacheNovelFragment.NOVEL_CACHE_PREFIX + Title + "_").execute();
@@ -236,10 +236,10 @@ public class Plug_Cache extends NovelCore {
 
     /**
      * 检测小说数据是否缓存成功
-     * @param i 索引
+     * @param count 索引
      */
-    private void check(int i){
-        if(i == chapterInfoList.size() - 1){
+    private void check(int count){
+        if(count == chapterInfoList.size() - 1){
             callBack_cacheSaved.checkCacheSuccess(true);
         }
     }

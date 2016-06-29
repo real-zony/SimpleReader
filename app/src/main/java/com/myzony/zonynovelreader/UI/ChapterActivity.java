@@ -50,25 +50,23 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(getIntent().getExtras() != null){
             currentNovelInfo = (NovelInfo) getIntent().getSerializableExtra(VIEW_CHAPTER_INFO);
         }
         toolbar.setTitle(currentNovelInfo.getName());
         toolbar.setSubtitle(currentNovelInfo.getAuthor());
         toolbar.setSubtitleTextColor(getResources().getColor(android.R.color.white));
-        // 初始化视图
-        initView();
-
         cacheKey = VIEW_CHAPTER_INFO + currentNovelInfo.getUrl().replace("/","") + "_" +AppContext.flags;
+
+        initView();
     }
 
     private void initView(){
-        chapter_list_title = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        chapter_list_title = new ArrayAdapter(this, android.R.layout.simple_list_item_1);
         tipInfoLayout.setLoading();
         setListView(false);
 
-        // 设置监听器
-        // 阅读章节
         chapterListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -83,7 +81,6 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
             }
         });
 
-        // 加载章节
         if(AppContext.getCachePlug().isExitsCachedChapter(currentNovelInfo.getName(),this)){
             AppContext.getCachePlug().bindCB_Chapter(this);
             AppContext.getCachePlug().getChapterList(currentNovelInfo.getName(),this,null);
@@ -171,11 +168,15 @@ public class ChapterActivity extends BaseActivity implements Plug_CallBack_Chapt
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_cachedNovel){
-            AppContext.getCachePlug().bindCB_CacheSaved(this);
-            AppContext.getCachePlug().addToList(currentNovelInfo);
-            AppContext.getCachePlug().saveCache(this,AppContext.getPlug().getChapterInfoList(),currentNovelInfo.getName());
-            setListView(false);
-            tipInfoLayout.setLoading("正在缓存小说...");
+            if(AppContext.getCachePlug().isExitsCachedChapter(currentNovelInfo.getName(),this)){
+                Toast.makeText(this,"已经缓存了这本小说",Toast.LENGTH_SHORT).show();
+            }else{
+                AppContext.getCachePlug().bindCB_CacheSaved(this);
+                AppContext.getCachePlug().addToList(currentNovelInfo);
+                AppContext.getCachePlug().saveCache(this,AppContext.getPlug().getChapterInfoList(),currentNovelInfo.getName());
+                setListView(false);
+                tipInfoLayout.setLoading("正在缓存小说...");
+            }
         }
         return super.onOptionsItemSelected(item);
     }

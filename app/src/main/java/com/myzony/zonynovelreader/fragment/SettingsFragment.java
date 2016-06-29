@@ -99,6 +99,7 @@ public class SettingsFragment extends PreferenceFragment {
                 if(msg.what == 1){
                     clearCachePreference.setSummary("0KB");
                     Toast.makeText(getActivity(),getString(R.string.clear_cache_success),Toast.LENGTH_LONG).show();
+                    AppContext.getCachePlug().clear();
                 }else{
                     Toast.makeText(getActivity(),getString(R.string.clear_cache_fail),Toast.LENGTH_LONG).show();
                 }
