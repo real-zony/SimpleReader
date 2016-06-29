@@ -2,7 +2,6 @@ package com.myzony.zonynovelreader.NovelCore;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -15,9 +14,9 @@ import com.myzony.zonynovelreader.bean.ChapterInfo;
 import com.myzony.zonynovelreader.bean.NovelInfo;
 import com.myzony.zonynovelreader.cache.CacheManager;
 import com.myzony.zonynovelreader.fragment.CacheNovelFragment;
+import com.myzony.zonynovelreader.utils.StringUtils;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,13 +171,9 @@ public class Plug_Cache extends NovelCore {
                 StringRequest stringRequest = new StringRequest(chapterInfoList.get(i).getUrl(), new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        try {
-                            String request = new String(s.getBytes("ISO-8859-1"), "gbk");
-                            CacheManager.saveObject(mContext.get(), AppContext.getPlug().resolveData(request),
+                        String request = StringUtils.encodingConvert(s,"gbk");
+                        CacheManager.saveObject(mContext.get(), AppContext.getPlug().resolveData(request),
                                     key + chapterInfoList.get(count).getTitle());
-                        }catch (UnsupportedEncodingException exp){
-                            exp.printStackTrace();
-                        }
                         check(count);
                     }
                 }, new Response.ErrorListener() {
@@ -255,7 +250,7 @@ public class Plug_Cache extends NovelCore {
     }
     @Override
     public void getChapterList(String novelUrl, Context context, RequestQueue queue) {
-        new ReadCacheTask_ChapterList(context).execute(CacheNovelFragment.NOVEL_CACHE_PREFIX + novelUrl + "_");
+        new ReadCacheTask_ChapterList(context).execute(CacheNovelFragment.NOVEL_CACHE_PREFIX + novelUrl);
     }
     @Override
     public void getNovelData(String url, RequestQueue queue) {

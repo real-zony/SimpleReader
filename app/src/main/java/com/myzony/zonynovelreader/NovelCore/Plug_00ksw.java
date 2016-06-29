@@ -12,6 +12,7 @@ import com.myzony.zonynovelreader.Common.AppContext;
 import com.myzony.zonynovelreader.bean.ChapterInfo;
 import com.myzony.zonynovelreader.bean.NovelInfo;
 import com.myzony.zonynovelreader.utils.RegexUtils;
+import com.myzony.zonynovelreader.utils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -26,30 +27,26 @@ public class Plug_00ksw extends NovelCore {
         this.mQueue = queue;
         clear();
 
-        try {
-            String request = new String(targetHTML.getBytes("ISO-8859-1"), "gbk");
-            if (targetHTML.indexOf("weekvisit") != -1) { // 推荐榜
-                // 抓取作品URL地址
-                Matcher matcher = RegexUtils.newMatcher("/html/\\d+/\\d+/", request, false);
-                while (matcher.find()) {
-                    // 重构URL
-                    String res = String.format("http://m.00ksw.com%s", matcher.group().toString());
-                    // 添加到列表
-                    infoListUrl.add(res);
-                }
-            } else { // 搜索
-                Matcher matcher = RegexUtils.newMatcher("http://.+.00ksw.com/html/\\d+/\\d+/", request, false);
-                while (matcher.find()) {
-                    if (!infoListUrl.contains(matcher.group().toString().replaceAll("www", "m"))) {
-                        infoListUrl.add(matcher.group().toString().replaceAll("www", "m"));
-                    }
+        String request = StringUtils.encodingConvert(targetHTML,"gbk");
+        if (targetHTML.indexOf("weekvisit") != -1) { // 推荐榜
+            // 抓取作品URL地址
+            Matcher matcher = RegexUtils.newMatcher("/html/\\d+/\\d+/", request, false);
+            while (matcher.find()) {
+                // 重构URL
+                String res = String.format("http://m.00ksw.com%s", matcher.group().toString());
+                // 添加到列表
+                infoListUrl.add(res);
+            }
+        } else { // 搜索
+            Matcher matcher = RegexUtils.newMatcher("http://.+.00ksw.com/html/\\d+/\\d+/", request, false);
+            while (matcher.find()) {
+                if (!infoListUrl.contains(matcher.group().toString().replaceAll("www", "m"))) {
+                    infoListUrl.add(matcher.group().toString().replaceAll("www", "m"));
                 }
             }
-            AppContext.PAGE_SIZE = infoListUrl.size();
-            getNovelInfo();
-        } catch (UnsupportedEncodingException exp) {
-            return;
         }
+        AppContext.PAGE_SIZE = infoListUrl.size();
+        getNovelInfo();
     }
 
     @Override
@@ -59,16 +56,12 @@ public class Plug_00ksw extends NovelCore {
         StringRequest stringRequest = new StringRequest(novelUrl.replaceAll("html", "ml").replaceAll("www", "m"), new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                try {
-                    String resquest = new String(s.getBytes("ISO-8859-1"), "gbk");
-                    // 提取最大页码
-                    Matcher matcher = RegexUtils.newMatcher("第\\d+/\\d+页", resquest, true);
-                    Matcher matcherYeMa = RegexUtils.newMatcher("\\d+(?=页)", matcher.group().toString(), true);
-                    // 加载章节
-                    chapterLoad(Integer.parseInt(matcherYeMa.group().toString()), novelUrl.replaceAll("html", "ml").replaceAll("www", "m"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                String request = StringUtils.encodingConvert(s,"gbk");
+                // 提取最大页码
+                Matcher matcher = RegexUtils.newMatcher("第\\d+/\\d+页", request, true);
+                Matcher matcherYeMa = RegexUtils.newMatcher("\\d+(?=页)", matcher.group().toString(), true);
+                // 加载章节
+                chapterLoad(Integer.parseInt(matcherYeMa.group().toString()), novelUrl.replaceAll("html", "ml").replaceAll("www", "m"));
             }
         }, new Response.ErrorListener() {
             @Override
@@ -85,12 +78,8 @@ public class Plug_00ksw extends NovelCore {
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                try {
-                    String request = new String(s.getBytes("ISO-8859-1"), "gbk");
-                    callBack_read.call_Read(resolveData(request));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                String request = StringUtils.encodingConvert(s,"gbk");
+                callBack_read.call_Read(resolveData(request));
             }
         }, new Response.ErrorListener() {
             @Override
@@ -137,35 +126,30 @@ public class Plug_00ksw extends NovelCore {
             StringRequest stringRequest = new StringRequest(infoListUrl.get(i), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String s) {
-                    try {
-                        String resquest = new String(s.getBytes("ISO-8859-1"), "gbk");
-                        NovelInfo info = new NovelInfo();
-                        // 搜寻作者信息
-                        Matcher matcher_author1 = RegexUtils.newMatcher("<a href=\"/author.+\">.+</a></p>", resquest, true);
-                        Matcher matcher_author2 = RegexUtils.newMatcher("r/.+(?=\">)", matcher_author1.group().toString(), true);
-                        info.setAuthor(matcher_author2.group().toString().replaceAll("r/", ""));
-                        // 搜寻小说名字
-                        Matcher matcher_name = RegexUtils.newMatcher("(?<=<p><a ><h2>).+(?=</h2></a></P>)", resquest, true);
-                        info.setName(matcher_name.group().toString());
+                    String request = StringUtils.encodingConvert(s,"gbk");
+                    NovelInfo info = new NovelInfo();
+                    // 搜寻作者信息
+                    Matcher matcher_author1 = RegexUtils.newMatcher("<a href=\"/author.+\">.+</a></p>", request, true);
+                    Matcher matcher_author2 = RegexUtils.newMatcher("r/.+(?=\">)", matcher_author1.group().toString(), true);
+                    info.setAuthor(matcher_author2.group().toString().replaceAll("r/", ""));
+                    // 搜寻小说名字
+                    Matcher matcher_name = RegexUtils.newMatcher("(?<=<p><a ><h2>).+(?=</h2></a></P>)", request, true);
+                    info.setName(matcher_name.group().toString());
 
-                        // 搜寻更新信息
-                        Matcher matcher_update = RegexUtils.newMatcher("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}", resquest, true);
-                        info.setUpdate(matcher_update.group().toString());
-                        // 读取描述信息
-                        Matcher matcher_descript = RegexUtils.newMatcher("class=\"intro_info\">.+最新章节预览", resquest.replaceAll("\\s*|\t|\r|\n", ""), true);
-                        info.setDescript(matcher_descript.group().toString().replaceAll("class=\"intro_info\">", "").replaceAll("最新章节预览", ""));
-                        // 储存小说URL
-                        Matcher matcher_imageUrl = RegexUtils.newMatcher("http://www.00ksw.com/img/\\d+/\\d+/\\d+s.jpg", resquest, true);
-                        // 设置图像
-                        info.setImageUrl(matcher_imageUrl.group().toString());
-                        // 设置小说URL
-                        info.setUrl(matcher_imageUrl.group().toString().replaceAll("\\d+s.jpg", "").replaceAll("img", "html"));
-                        Log.i("infinifnifnifnifnifn", info.getUrl());
-                        infoList.add(info);
-                        novelLoadCheck();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                    // 搜寻更新信息
+                    Matcher matcher_update = RegexUtils.newMatcher("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}", request, true);
+                    info.setUpdate(matcher_update.group().toString());
+                    // 读取描述信息
+                    Matcher matcher_descript = RegexUtils.newMatcher("class=\"intro_info\">.+最新章节预览", request.replaceAll("\\s*|\t|\r|\n", ""), true);
+                    info.setDescript(matcher_descript.group().toString().replaceAll("class=\"intro_info\">", "").replaceAll("最新章节预览", ""));
+                    // 储存小说URL
+                    Matcher matcher_imageUrl = RegexUtils.newMatcher("http://www.00ksw.com/img/\\d+/\\d+/\\d+s.jpg", request, true);
+                    // 设置图像
+                    info.setImageUrl(matcher_imageUrl.group().toString());
+                    // 设置小说URL
+                    info.setUrl(matcher_imageUrl.group().toString().replaceAll("\\d+s.jpg", "").replaceAll("img", "html"));
+                    infoList.add(info);
+                    novelLoadCheck();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -197,31 +181,27 @@ public class Plug_00ksw extends NovelCore {
             StringRequest stringRequest = new StringRequest(String.format("%s_%d%s", url.substring(0, url.length() - 1), i, "/"), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String s) {
-                    try {
-                        String request = new String(s.getBytes("ISO-8859-1"), "gbk");
-                        // 提取小说章节URL
-                        Matcher matcher_chapter = RegexUtils.newMatcher("/html/\\d+/\\d+/\\d+.html", request, false);
-                        Matcher matcher_title = RegexUtils.newMatcher("html'>.+<span>", request, false);
-                        while (matcher_chapter.find()) {
-                            ChapterInfo title = new ChapterInfo();
-                            title.setUrl(String.format("http://m.00ksw.com/%s", matcher_chapter.group().toString()));
-                            // 提取章节id
-                            Matcher matcher_id = RegexUtils.newMatcher("\\d+(?=.html)", title.getUrl(), true);
-                            title.setId(Integer.parseInt(matcher_id.group().toString()));
-                            // 提取标题
-                            matcher_title.find();
-                            title.setTitle(matcher_title.group().toString().replaceAll("html'>", "").replaceAll("<span>", ""));
-                            chapterInfoList.add(title);
-                        }
-                        chapterLoadCheck(count, page);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                    String request = StringUtils.encodingConvert(s,"gbk");
+                    // 提取小说章节URL
+                    Matcher matcher_chapter = RegexUtils.newMatcher("/html/\\d+/\\d+/\\d+.html", request, false);
+                    Matcher matcher_title = RegexUtils.newMatcher("html'>.+<span>", request, false);
+                    while (matcher_chapter.find()) {
+                        ChapterInfo title = new ChapterInfo();
+                        title.setUrl(String.format("http://m.00ksw.com/%s", matcher_chapter.group().toString()));
+                        // 提取章节id
+                        Matcher matcher_id = RegexUtils.newMatcher("\\d+(?=.html)", title.getUrl(), true);
+                        title.setId(Integer.parseInt(matcher_id.group().toString()));
+                        // 提取标题
+                        matcher_title.find();
+                        title.setTitle(matcher_title.group().toString().replaceAll("html'>", "").replaceAll("<span>", ""));
+                        chapterInfoList.add(title);
                     }
+                    chapterLoadCheck(count, page);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    //Toast.makeText(context, "出现错误", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "出现错误", Toast.LENGTH_LONG).show();
                 }
             });
             stringRequest.setShouldCache(false);
