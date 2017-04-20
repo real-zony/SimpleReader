@@ -1,6 +1,8 @@
 # 此项目已经弃坑，感谢关注。
 #SimpleReader 简单阅读
 
+The new version at http://git.oschina.net/jokers
+
 ##开发环境：
 Android Studio 2.1.2
 ##SDK 版本：  
